@@ -58,11 +58,11 @@ static void DoBeforeEachAction();
   * as a simple substitution mechanism that allows for more readable
   * entries in the Rules section later. 
   */
-
-delimiter [\t\s]
-WS {delimiter}+
 DIG [0-9]
 HEX [0-9A-Fa-f]
+LETTER [A-Za-z]
+ /* Declaramos el ambiente comentario */
+%x COMMENT    
 
 %%            /* BEGIN RULES SECTION */
  /* KEYWORDS */
@@ -110,6 +110,17 @@ HEX [0-9A-Fa-f]
 "&&"    {return T_And;}
 "||"    {return T_Or;}
 
+ /* COMENTARIOS */
+"//"[^"\n"]*    {}
+"/*"    {
+	BEGIN(COMMENT);
+}
+<COMMENT>"*/"    {
+	BEGIN(0);
+}
+<COMMENT>.    {}
+
+ /* CONSTANTES */
  /* Decimal Hexadecimal constant */
 ({DIG}+|0("x"|"X"){HEX}+)    {yylval.integerConstant = strtol(yytext, NULL, 0); return T_IntConstant;}
 
@@ -119,8 +130,14 @@ HEX [0-9A-Fa-f]
  /* Double constant */
 {DIG}+"."{DIG}*(("E"|"e")("+"|"-")?{DIG}+)?    {yylval.doubleConstant = strtod(yytext, NULL); return T_DoubleConstant;}
 
- /* Identifiers (FALTA) */
-[A-Z]([A-Z]*|[0-9]*|_*)*"("?    {
+ /* String constant */
+\"[^"\n"]*\" {
+	yylval.stringConstant = strdup(yytext); 
+	return T_StringConstant;
+}
+
+ /* Identifiers */
+{LETTER}({LETTER}*|{DIG}*|_*)*    {
 	strncpy(yylval.identifier, yytext, MaxIdentLen);
 	yylval.identifier[MaxIdentLen] = '\0';
 	if(strlen(yytext) > MaxIdentLen)
@@ -128,9 +145,8 @@ HEX [0-9A-Fa-f]
 	return T_Identifier;
 }
 
-
  /* Cada nueva linea incrementa el contador y resetea las columnas */
-[\n]    {linea++; first_col = 1; last_col = 1;}
+<*>[\n]    {linea++; first_col = 1; last_col = 1;}
 
 %%
 

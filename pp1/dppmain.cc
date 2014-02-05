@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 {
   int ch;
   while ((ch = getc(stdin)) != EOF)
-  //  putc(ch, stdout);
-  	printf("%d\n", yylex());
+   putc(ch, stdout);
+  	// printf("%d", yylex());
   return 0;
 }
