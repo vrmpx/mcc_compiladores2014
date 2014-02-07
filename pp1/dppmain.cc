@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
   // int ch;
   // while ((ch = getc(stdin)) != EOF)
    // putc(ch, stdout);
+	
 	TokenType token;
 	while ((token = (TokenType)yylex()) != 0) 
 		putc(token, stdout);

@@ -65,12 +65,13 @@ LETTER [A-Za-z]
 %x COMMENT    
 
 %%            /* BEGIN RULES SECTION */
+
  /* KEYWORDS */
 "void"    {return T_Void;}
 "int"    {return T_Int;}
 "double"    {return T_Double;}
 "bool"    {return T_Bool;}
-"string "    {return T_String;}
+"string"    {return T_String;}
 "class"    {return T_Class;}
 "interface"    {return T_Interface;}
 "null"    {return T_Null;}
@@ -110,6 +111,12 @@ LETTER [A-Za-z]
 "&&"    {return T_And;}
 "||"    {return T_Or;}
 
+
+[" "]+ {
+	// printf("(SPACEEEEE)\n");
+}
+
+
  /* COMENTARIOS */
 "//"[^"\n"]*    {}
 "/*"    {
@@ -119,6 +126,17 @@ LETTER [A-Za-z]
 	BEGIN(0);
 }
 <COMMENT>.    {}
+<COMMENT><<EOF>>    {
+	ReportError::UntermComment();
+	yyterminate();
+}
+
+ /* Cada nueva linea incrementa el contador y resetea las columnas */
+<*>[\n]    {
+	linea++;
+	first_col = 1;
+	last_col = 1;
+}
 
  /* CONSTANTES */
  /* Decimal Hexadecimal constant */
@@ -131,9 +149,13 @@ LETTER [A-Za-z]
 {DIG}+"."{DIG}*(("E"|"e")("+"|"-")?{DIG}+)?    {yylval.doubleConstant = strtod(yytext, NULL); return T_DoubleConstant;}
 
  /* String constant */
-\"[^"\n"]*\" {
-	yylval.stringConstant = strdup(yytext); 
-	return T_StringConstant;
+\"[^"\n"]*\"?    {
+	yylval.stringConstant = strdup(yytext);
+	size_t len = strlen(yytext);
+	if(len == 1 || yytext[len - 1] != '"')
+		ReportError::UntermString(&yylloc, yytext);
+	else
+		return T_StringConstant;
 }
 
  /* Identifiers */
@@ -144,9 +166,6 @@ LETTER [A-Za-z]
 		ReportError::LongIdentifier(&yylloc, yytext);
 	return T_Identifier;
 }
-
- /* Cada nueva linea incrementa el contador y resetea las columnas */
-<*>[\n]    {linea++; first_col = 1; last_col = 1;}
 
 %%
 
