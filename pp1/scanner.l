@@ -132,7 +132,7 @@ LETTER [A-Za-z]
 }
 
  /* Cada nueva linea incrementa el contador y resetea las columnas */
-<*>[\n]    {
+<*>["\n"]    {
 	linea++;
 	first_col = 1;
 	last_col = 1;
@@ -146,7 +146,16 @@ LETTER [A-Za-z]
 (true|false)    {yylval.boolConstant = strcmp(yytext, "true") == 0 ? true : false; return T_BoolConstant;}
 
  /* Double constant */
-{DIG}+"."{DIG}*(("E"|"e")("+"|"-")?{DIG}+)?    {yylval.doubleConstant = strtod(yytext, NULL); return T_DoubleConstant;}
+({DIG}+)"."{DIG}*(("E"|"e")("+"|"-")?{DIG}+)?    {yylval.doubleConstant = strtod(yytext, NULL); return T_DoubleConstant;}
+
+ /* Identifiers */
+{LETTER}({LETTER}*|{DIG}*|_*)*    {
+	strncpy(yylval.identifier, yytext, MaxIdentLen);
+	yylval.identifier[MaxIdentLen] = '\0';
+	if(strlen(yytext) > MaxIdentLen)
+		ReportError::LongIdentifier(&yylloc, yytext);
+	return T_Identifier;
+}
 
  /* String constant */
 \"[^"\n"]*\"?    {
@@ -158,13 +167,9 @@ LETTER [A-Za-z]
 		return T_StringConstant;
 }
 
- /* Identifiers */
-{LETTER}({LETTER}*|{DIG}*|_*)*    {
-	strncpy(yylval.identifier, yytext, MaxIdentLen);
-	yylval.identifier[MaxIdentLen] = '\0';
-	if(strlen(yytext) > MaxIdentLen)
-		ReportError::LongIdentifier(&yylloc, yytext);
-	return T_Identifier;
+
+["$"|"@"|"^"|"&"|"~"|"`"|"?"]    {
+	ReportError::UnrecogChar(&yylloc, yytext[0]);
 }
 
 %%
