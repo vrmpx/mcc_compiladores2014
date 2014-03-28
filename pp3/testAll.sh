@@ -14,5 +14,14 @@ do
 	filename="${filename%.*}"
 	OUT=$RESULTS"/"$filename.out
 
-	$DCC < $f 2>$OUT
+	$DCC <$f >&$OUT
+
+	printf "Checking %s: " $filename
+	if ! cmp -s $OUT "samples/"$filename.out ; then
+		echo "----------------- FAIL -----------------"
+		diff $OUT "samples/"$filename.out 
+		echo "----------------- FAIL -----------------"
+	else
+		echo "----------------- PASS -----------------"
+	fi
 done

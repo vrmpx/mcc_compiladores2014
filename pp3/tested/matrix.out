@@ -1,0 +1,42 @@
+
+*** Error line 71.
+  SparseItem GetNext() { return next;}
+                                ^^^^
+*** No declaration found for variable 'next'
+
+
+*** Error line 72.
+  int GetY() { return y;}
+                      ^
+*** No declaration found for variable 'y'
+
+
+*** Error line 73.
+  int GetData() { return data;}
+                         ^^^^
+*** No declaration found for variable 'data'
+
+
+*** Error line 96.
+	return elem;
+               ^^^^
+*** No declaration found for variable 'elem'
+
+
+*** Error line 107.
+      elem.SetData(value);
+      ^^^^
+*** No declaration found for variable 'elem'
+
+
+*** Error line 110.
+      elem.Init(value, y, m[x]);
+      ^^^^
+*** No declaration found for variable 'elem'
+
+
+*** Error line 119.
+      return elem.GetData();
+             ^^^^
+*** No declaration found for variable 'elem'
+

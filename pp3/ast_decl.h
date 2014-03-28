@@ -69,7 +69,7 @@ class ClassDecl : public Decl
     void CheckExtends();
     void CheckExtendedMembers(NamedType *extType);
     void CheckOverride(Scope *other);
-
+    void CheckImplements();
 };
 
 class InterfaceDecl : public Decl 

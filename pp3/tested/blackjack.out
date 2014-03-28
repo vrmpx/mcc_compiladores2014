@@ -1,0 +1,216 @@
+
+*** Error line 12.
+    return seed;
+           ^^^^
+*** No declaration found for variable 'seed'
+
+
+*** Error line 52.
+    return result;
+           ^^^^^^
+*** No declaration found for variable 'result'
+
+
+*** Error line 82.
+    return c;
+           ^
+*** No declaration found for variable 'c'
+
+
+*** Error line 112.
+    Print("What is the name of player #", num, "? ");
+                                          ^^^
+*** No declaration found for variable 'num'
+
+
+*** Error line 119.
+    Print(name, " was dealt a ", card, ".\n");
+          ^^^^
+*** No declaration found for variable 'name'
+
+
+*** Error line 119.
+    Print(name, " was dealt a ", card, ".\n");
+                                 ^^^^
+*** No declaration found for variable 'card'
+
+
+*** Error line 135.
+      Print(name, ", your total is ", total, ".\n");
+            ^^^^
+*** No declaration found for variable 'name'
+
+
+*** Error line 135.
+      Print(name, ", your total is ", total, ".\n");
+                                      ^^^^^
+*** No declaration found for variable 'total'
+
+
+*** Error line 144.
+    Print("\n", name, "'s turn.\n");
+                ^^^^
+*** No declaration found for variable 'name'
+
+
+*** Error line 153.
+        Print(name, ", your total is ", total, ".\n");
+              ^^^^
+*** No declaration found for variable 'name'
+
+
+*** Error line 153.
+        Print(name, ", your total is ", total, ".\n");
+                                        ^^^^^
+*** No declaration found for variable 'total'
+
+
+*** Error line 155.
+        if (stillGoing) Hit(deck);
+            ^^^^^^^^^^
+*** No declaration found for variable 'stillGoing'
+
+
+*** Error line 158.
+    if (total > 21) Print(name, " busts with the big ", total, "!\n");
+                          ^^^^
+*** No declaration found for variable 'name'
+
+
+*** Error line 158.
+    if (total > 21) Print(name, " busts with the big ", total, "!\n");
+                                                        ^^^^^
+*** No declaration found for variable 'total'
+
+
+*** Error line 159.
+    else Print(name, " stays at ", total, ".\n");
+               ^^^^
+*** No declaration found for variable 'name'
+
+
+*** Error line 159.
+    else Print(name, " stays at ", total, ".\n");
+                                   ^^^^^
+*** No declaration found for variable 'total'
+
+
+*** Error line 165.
+    Print(name, ", you have $", money, ".\n");
+          ^^^^
+*** No declaration found for variable 'name'
+
+
+*** Error line 165.
+    Print(name, ", you have $", money, ".\n");
+                                ^^^^^
+*** No declaration found for variable 'money'
+
+
+*** Error line 177.
+  int GetTotal() { return total;}
+                          ^^^^^
+*** No declaration found for variable 'total'
+
+
+*** Error line 187.
+    if (win >= 1) Print(name, ", you won $", bet, ".\n");
+                        ^^^^
+*** No declaration found for variable 'name'
+
+
+*** Error line 187.
+    if (win >= 1) Print(name, ", you won $", bet, ".\n");
+                                             ^^^
+*** No declaration found for variable 'bet'
+
+
+*** Error line 188.
+    else if (lose >= 1) Print(name, ", you lost $", bet, ".\n");
+                              ^^^^
+*** No declaration found for variable 'name'
+
+
+*** Error line 188.
+    else if (lose >= 1) Print(name, ", you lost $", bet, ".\n");
+                                                    ^^^
+*** No declaration found for variable 'bet'
+
+
+*** Error line 189.
+    else Print(name, ", you push!\n");
+               ^^^^
+*** No declaration found for variable 'name'
+
+
+*** Error line 206.
+    Print("\n", name, "'s turn.\n");
+                ^^^^
+*** No declaration found for variable 'name'
+
+
+*** Error line 210.
+    if (total > 21) Print(name, " busts with the big ", total, "!\n");
+                          ^^^^
+*** No declaration found for variable 'name'
+
+
+*** Error line 210.
+    if (total > 21) Print(name, " busts with the big ", total, "!\n");
+                                                        ^^^^^
+*** No declaration found for variable 'total'
+
+
+*** Error line 211.
+    else Print(name, " stays at ", total, ".\n");
+               ^^^^
+*** No declaration found for variable 'name'
+
+
+*** Error line 211.
+    else Print(name, " stays at ", total, ".\n");
+                                   ^^^^^
+*** No declaration found for variable 'total'
+
+
+*** Error line 228.
+    gRnd.Init(ReadInteger());
+    ^^^^
+*** No declaration found for variable 'gRnd'
+
+
+*** Error line 232.
+    deck.Init();
+    ^^^^
+*** No declaration found for variable 'deck'
+
+
+*** Error line 233.
+    deck.Shuffle();
+    ^^^^
+*** No declaration found for variable 'deck'
+
+
+*** Error line 279.
+    if (deck.NumCardsRemaining() < 26) deck.Shuffle();
+                                       ^^^^
+*** No declaration found for variable 'deck'
+
+
+*** Error line 282.
+    dealer.Init(0);
+    ^^^^^^
+*** No declaration found for variable 'dealer'
+
+
+*** Error line 283.
+    dealer.Hit(deck);
+    ^^^^^^
+*** No declaration found for variable 'dealer'
+
+
+*** Error line 285.
+    dealer.TakeTurn(deck);
+    ^^^^^^
+*** No declaration found for variable 'dealer'
+

@@ -1,0 +1,18 @@
+
+*** Error line 14.
+    return height;
+           ^^^^^^
+*** No declaration found for variable 'height'
+
+
+*** Error line 18.
+    return this.mother;
+                ^^^^^^
+*** No declaration found for variable 'mother'
+
+
+*** Error line 29.
+    return isSpotted;
+           ^^^^^^^^^
+*** No declaration found for variable 'isSpotted'
+

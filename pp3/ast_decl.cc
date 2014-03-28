@@ -75,6 +75,7 @@ void ClassDecl::BuildScope(Scope *parent){
 
 void ClassDecl::Check() {
     CheckExtends();
+    CheckImplements();
 
     for(int i = 0; i < members->NumElements(); i++)
         members->Nth(i)->Check();
@@ -118,6 +119,18 @@ void ClassDecl::CheckOverride(Scope *other){
 
         if(dynamic_cast<FnDecl*>(lookup) != NULL && !d->IsEquivalentTo(lookup))
             ReportError::OverrideMismatch(d);
+    }
+}
+
+void ClassDecl::CheckImplements(){
+    if (implements == NULL)
+        return;
+
+    Decl *lookup;
+    for(int i = 0; i < implements->NumElements(); i++){
+        lookup = scope->GetParent()->table->Lookup(extends->Name());
+        if(dynamic_cast<ClassDecl*>(lookup) == NULL)
+            implements->Nth(i)->ReportNotDeclaredIdentifier(LookingForClass);
     }
 }
 
