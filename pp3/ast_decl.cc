@@ -7,17 +7,19 @@
 #include "ast_stmt.h"
         
          
-Decl::Decl(Identifier *n) : Node(*n->GetLocation()) {
+Decl::Decl(Identifier *n) : Node(*n->GetLocation()), scope(new Scope) {
     Assert(n != NULL);
     (id=n)->SetParent(this); 
 }
 
+void Decl::BuildScope(Scope *parent){
+    scope->SetParent(parent);
+}
 
 VarDecl::VarDecl(Identifier *n, Type *t) : Decl(n) {
     Assert(n != NULL && t != NULL);
     (type=t)->SetParent(this);
 }
-  
 
 ClassDecl::ClassDecl(Identifier *n, NamedType *ex, List<NamedType*> *imp, List<Decl*> *m) : Decl(n) {
     // extends can be NULL, impl & mem may be empty lists but cannot be NULL
@@ -28,10 +30,39 @@ ClassDecl::ClassDecl(Identifier *n, NamedType *ex, List<NamedType*> *imp, List<D
     (members=m)->SetParentAll(this);
 }
 
+void ClassDecl::BuildScope(Scope *parent){
+    scope->SetParent(parent);
+
+    for(int i = 0; i < members->NumElements(); i++)
+        scope->AddDecl(members->Nth(i));
+
+    for(int i = 0; i < members->NumElements(); i++)
+        members->Nth(i)->BuildScope(scope);
+}
+
+void ClassDecl::Check() {
+    for(int i = 0; i < members->NumElements(); i++)
+        members->Nth(i)->Check();
+}
 
 InterfaceDecl::InterfaceDecl(Identifier *n, List<Decl*> *m) : Decl(n) {
     Assert(n != NULL && m != NULL);
     (members=m)->SetParentAll(this);
+}
+
+void InterfaceDecl::BuildScope(Scope *parent) {
+    scope->SetParent(parent);
+
+    for(int i = 0; i < members->NumElements(); i++)
+        scope->AddDecl(members->Nth(i));
+
+    for(int i = 0; i < members->NumElements(); i++)
+        members->Nth(i)->BuildScope(scope);
+}
+
+void InterfaceDecl::Check() {
+    for(int i = 0; i < members->NumElements(); i++)
+        members->Nth(i)->Check();
 }
 
 	
@@ -46,5 +77,18 @@ void FnDecl::SetFunctionBody(Stmt *b) {
     (body=b)->SetParent(this);
 }
 
+void FnDecl::BuildScope(Scope *parent){
+    scope->SetParent(parent);
+    scope->SetFunctionDecl(this);
+
+    for(int i = 0; i < formals->NumElements(); i++)
+        scope->AddDecl(formals->Nth(i));
+
+    for(int i = 0; i < formals->NumElements(); i++)
+        formals->Nth(i)->BuildScope(scope);
+
+    if(body != NULL)
+        body->BuildScope(scope);
+}
 
 
