@@ -64,6 +64,9 @@ class ArrayType : public Type
     ArrayType(yyltype loc, Type *elemType);
     
     void PrintToStream(std::ostream& out) { out << elemType << "[]"; }
+    void ReportNotDeclaredIdentifier(reasonT reason);
+    const char* Name() { return elemType->Name(); }
+    bool IsPrimitive() { return false; }
 };
 
  

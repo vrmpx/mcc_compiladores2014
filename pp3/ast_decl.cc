@@ -39,10 +39,11 @@ void VarDecl::Check() {
 
     Scope *s = scope;
     Decl *d = NULL;
-    while (s != NULL) {
-        if ((d = s->table->Lookup(type->Name())) != NULL) {
-            if (dynamic_cast<ClassDecl*>(d) == NULL &&
-                dynamic_cast<InterfaceDecl*>(d) == NULL)
+
+
+    while(s != NULL){
+        if ((d = s->table->Lookup(type->Name())) != NULL){
+          if (dynamic_cast<ClassDecl*>(d) == NULL && dynamic_cast<InterfaceDecl*>(d) == NULL)
                 type->ReportNotDeclaredIdentifier(LookingForType);
 
             return;
@@ -130,7 +131,7 @@ void ClassDecl::CheckImplements(){
     for(int i = 0; i < implements->NumElements(); i++){
         lookup = scope->GetParent()->table->Lookup(extends->Name());
         if(dynamic_cast<ClassDecl*>(lookup) == NULL)
-            implements->Nth(i)->ReportNotDeclaredIdentifier(LookingForClass);
+            implements->Nth(i)->ReportNotDeclaredIdentifier(LookingForInterface);
     }
 }
 

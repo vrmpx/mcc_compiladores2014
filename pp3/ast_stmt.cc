@@ -44,14 +44,12 @@ void Program::Check() {
 }
 
 void Program::BuildScope(){
-    int n = decls->NumElements();
-    for (int i = 0; i < n; i++) {
-        pScope->AddDecl(decls->Nth(i));
-    }
 
-    for (int i = 0; i < n; i++){
+    for (int i = 0; i < decls->NumElements(); i++)
+        pScope->AddDecl(decls->Nth(i));
+
+    for (int i = 0; i < decls->NumElements(); i++)
         decls->Nth(i)->BuildScope(pScope);
-    }
 
 }
 
@@ -105,15 +103,11 @@ void ConditionalStmt::BuildScope(Scope *parent) {
 void ConditionalStmt::Check(){
     test->Check();
     body->Check();
-
-    // if (!test->GetType()->IsEquivalentTo(Type::boolType))
-    //     ReportError::TestNoBoolean(test);
 }
 
 
 void LoopStmt::BuildScope(Scope *parent){
     scope->SetParent(parent);
-
     test->BuildScope(scope);
     body->BuildScope(scope);
 }
@@ -133,7 +127,6 @@ IfStmt::IfStmt(Expr *t, Stmt *tb, Stmt *eb): ConditionalStmt(t, tb) {
 
 void IfStmt::BuildScope(Scope *parent){
     scope->SetParent(parent);
-
     test->BuildScope(scope);
     body->BuildScope(scope);
 
@@ -145,30 +138,12 @@ void IfStmt::Check() {
     test->Check();
     body->Check();
 
-    // if (!test->GetType()->IsEquivalentTo(Type::boolType))
-    //     ReportError::TestNoBoolean(test);   
-
     if (elseBody != NULL)
         elseBody->Check();
 
 }
 
-void BreakStmt::Check() {
-    LoopStmt *lp = NULL;
-    Scope *s = scope;
-
-    // PP4
-    // while(s != NULL){
-    //     if((lp = s->GetLoopDecl()) != NULL)
-    //         break;
-
-    //     s = s->GetParent();
-    // }
-
-    // if (lp == NULL)
-    //     ReportError::BreakOutsideLoop(this);
-
-}
+void BreakStmt::Check() {}
 
 ReturnStmt::ReturnStmt(yyltype loc, Expr *e) : Stmt(loc) { 
     Assert(e != NULL);
@@ -177,36 +152,11 @@ ReturnStmt::ReturnStmt(yyltype loc, Expr *e) : Stmt(loc) {
 
 void ReturnStmt::BuildScope(Scope *parent){
     scope->SetParent(parent);
-
     expr->BuildScope(scope);
 }
   
 void ReturnStmt::Check() {
     expr->Check();
-
-    //Recuperamos la declaracion de funcion
-    FnDecl *fn = NULL;
-    Scope *s = scope;
-
-    // PP4
-    // while(s != NULL){
-    //     if((fn = s->GetFunctionDecl()) != NULL)
-    //         break;
-    //     s = s->GetParent();
-    // }
-
-    // if (fn == NULL) {
-    //     ReportError::Formatted(location,
-    //                            "return is only allowed inside a function");
-    //     return;
-    // }
-
-    // Type *expected = fn->GetReturnType();
-    // Type *given = expr->GetType();
-
-    // if(!given->IsEquivalentTo(expected))
-    //     ReportError::ReturnMismatch(this, given, expected);
-
 }
 
 PrintStmt::PrintStmt(List<Expr*> *a) {    
