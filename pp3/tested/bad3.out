@@ -14,5 +14,5 @@ class Trouble extends Missing implements Gone
 *** Error line 3.
 class Trouble extends Missing implements Gone
                                          ^^^^
-*** No declaration found for class 'Gone'
+*** No declaration found for interface 'Gone'
 

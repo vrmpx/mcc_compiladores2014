@@ -37,10 +37,12 @@ void NamedType::ReportNotDeclaredIdentifier(reasonT reason){
 	ReportError::IdentifierNotDeclared(id, reason);
 }
 
-
 ArrayType::ArrayType(yyltype loc, Type *et) : Type(loc) {
     Assert(et != NULL);
     (elemType=et)->SetParent(this);
 }
 
+void ArrayType::ReportNotDeclaredIdentifier(reasonT reason){
+	elemType->ReportNotDeclaredIdentifier(reason);
+}
 

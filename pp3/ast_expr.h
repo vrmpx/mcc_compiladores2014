@@ -231,7 +231,7 @@ class NewArrayExpr : public Expr
   public:
     NewArrayExpr(yyltype loc, Expr *sizeExpr, Type *elemType);
     void BuildScope(Scope *parent);
-    void Check() {}
+    void Check();
 };
 
 class ReadIntegerExpr : public Expr

@@ -169,7 +169,13 @@ NewExpr::NewExpr(yyltype loc, NamedType *c) : Expr(loc) {
   (cType=c)->SetParent(this);
 }
 
-void NewExpr::Check() {}
+void NewExpr::Check() {
+    Decl *d = Program::pScope->table->Lookup(cType->Name());
+    ClassDecl *c = dynamic_cast<ClassDecl*>(d);
+
+    if (c == NULL)
+        ReportError::IdentifierNotDeclared(cType->ID(), LookingForClass);
+}
 
 NewArrayExpr::NewArrayExpr(yyltype loc, Expr *sz, Type *et) : Expr(loc) {
     Assert(sz != NULL && et != NULL);
@@ -179,6 +185,17 @@ NewArrayExpr::NewArrayExpr(yyltype loc, Expr *sz, Type *et) : Expr(loc) {
 
 void NewArrayExpr::BuildScope(Scope *parent){
     scope->SetParent(parent);
-
     size->BuildScope(scope);
+}
+
+void NewArrayExpr::Check() {
+    size->Check();
+
+    if (elemType->IsPrimitive())
+        return;
+
+    Decl *d = Program::pScope->table->Lookup(elemType->Name());
+    if(dynamic_cast<ClassDecl*>(d) == NULL)
+        elemType->ReportNotDeclaredIdentifier(LookingForType);
+
 }

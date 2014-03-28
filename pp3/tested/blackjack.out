@@ -173,6 +173,12 @@
 *** No declaration found for variable 'total'
 
 
+*** Error line 205.
+  void TakeTurn(BJDeck deck) {
+       ^^^^^^^^
+*** Method 'TakeTurn' must match inherited type signature
+
+
 *** Error line 228.
     gRnd.Init(ReadInteger());
     ^^^^

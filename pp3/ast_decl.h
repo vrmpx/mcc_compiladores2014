@@ -37,6 +37,7 @@ class Decl : public Node
     virtual void BuildScope(Scope *parent);
     virtual void Check() = 0;
     virtual bool IsEquivalentTo(Decl* other);
+    Scope* GetScope(){ return scope; }
 
 };
 
@@ -70,6 +71,7 @@ class ClassDecl : public Decl
     void CheckExtendedMembers(NamedType *extType);
     void CheckOverride(Scope *other);
     void CheckImplements();
+    void CheckImplementedMembers(NamedType* impType);
 };
 
 class InterfaceDecl : public Decl 
