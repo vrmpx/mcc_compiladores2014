@@ -6,7 +6,24 @@
 #include "ast_type.h"
 #include "ast_decl.h"
 #include <string.h>
+#include "errors.h"
 
+ClassDecl* Expr::GetClassDecl(Scope *scope) {
+    ClassDecl *c = NULL;
+    Scope *s = scope;
+    while(s != NULL && (c = s->GetClassDecl()) == NULL)
+        s = s->GetParent();
+    return c;
+}
+
+Decl* Expr::GetFieldDecl(Identifier *f, Scope *scope){
+    Decl *lookup = NULL;
+    Scope *s = scope;
+    while(s != NULL && (lookup = s->table->Lookup(f->Name())) == NULL){
+        s = s->GetParent();
+    }
+    return lookup;
+}
 
 
 IntConstant::IntConstant(yyltype loc, int val) : Expr(loc) {
@@ -92,6 +109,25 @@ void FieldAccess::BuildScope(Scope *parent){
 
 }
 
+void FieldAccess::Check(){
+    if (base != NULL)
+        base->Check();
+
+    Decl *d = NULL;
+
+    if (base == NULL){
+        ClassDecl *c = GetClassDecl(scope);
+        if (c == NULL){
+            if ((d = GetFieldDecl(field, scope)) == NULL){
+                ReportError::IdentifierNotDeclared(field, LookingForVariable);
+                return;
+            }
+        }
+    }
+
+    if (dynamic_cast<VarDecl*>(d) == NULL)
+        ReportError::IdentifierNotDeclared(field, LookingForVariable);
+}
 
 Call::Call(yyltype loc, Expr *b, Identifier *f, List<Expr*> *a) : Expr(loc)  {
     Assert(f != NULL && a != NULL); // b can be be NULL (just means no explicit base)
@@ -111,11 +147,29 @@ void Call::BuildScope(Scope *parent){
         actuals->Nth(i)->BuildScope(scope);
 }
 
+void Call::Check() {
+    if (base != NULL)
+        base->Check();
+
+    Decl *d;
+    Type *t;
+    if ( base == NULL ){
+        ClassDecl *c = GetClassDecl(scope);
+        if(c == NULL){
+            if ((d = GetFieldDecl(field, scope)) == NULL){
+                ReportError::IdentifierNotDeclared(field, LookingForVariable);
+                return;
+            }
+        }
+    }
+}
+
 NewExpr::NewExpr(yyltype loc, NamedType *c) : Expr(loc) { 
   Assert(c != NULL);
   (cType=c)->SetParent(this);
 }
 
+void NewExpr::Check() {}
 
 NewArrayExpr::NewArrayExpr(yyltype loc, Expr *sz, Type *et) : Expr(loc) {
     Assert(sz != NULL && et != NULL);

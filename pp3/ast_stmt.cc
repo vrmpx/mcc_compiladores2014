@@ -39,10 +39,8 @@ void Program::Check() {
      */
 
      BuildScope();
-     int n = decls->NumElements();
-     for(int i = 0; i < n; i++){
+     for(int i = 0; i < decls->NumElements(); i++)
         decls->Nth(i)->Check();
-     }
 }
 
 void Program::BuildScope(){

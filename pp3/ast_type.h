@@ -15,6 +15,7 @@
 #include "ast.h"
 #include "list.h"
 #include <iostream>
+#include "errors.h"
 
 
 class Type : public Node 
@@ -32,6 +33,11 @@ class Type : public Node
     virtual void PrintToStream(std::ostream& out) { out << typeName; }
     friend std::ostream& operator<<(std::ostream& out, Type *t) { t->PrintToStream(out); return out; }
     virtual bool IsEquivalentTo(Type *other) { return this == other; }
+
+
+    virtual bool IsPrimitive() { return true; }
+    virtual const char* Name() { return typeName; }
+    virtual void ReportNotDeclaredIdentifier(reasonT reason) { return; }
 };
 
 class NamedType : public Type 
@@ -43,6 +49,10 @@ class NamedType : public Type
     NamedType(Identifier *i);
     
     void PrintToStream(std::ostream& out) { out << id; }
+    bool IsPrimitive() { return false; }
+    Identifier* ID() { return id; }
+    const char* Name() { return id->Name(); }
+    void ReportNotDeclaredIdentifier(reasonT reason);
 };
 
 class ArrayType : public Type 

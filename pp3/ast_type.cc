@@ -27,14 +27,15 @@ Type::Type(const char *n) {
     Assert(n);
     typeName = strdup(n);
 }
-
-
-
 	
 NamedType::NamedType(Identifier *i) : Type(*i->GetLocation()) {
     Assert(i != NULL);
     (id=i)->SetParent(this);
 } 
+
+void NamedType::ReportNotDeclaredIdentifier(reasonT reason){
+	ReportError::IdentifierNotDeclared(id, reason);
+}
 
 
 ArrayType::ArrayType(yyltype loc, Type *et) : Type(loc) {

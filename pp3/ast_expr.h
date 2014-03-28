@@ -26,6 +26,8 @@ class Expr : public Stmt
   public:
     Expr(yyltype loc) : Stmt(loc) {}
     Expr() : Stmt() {}
+    ClassDecl* GetClassDecl(Scope *scope);
+    Decl* GetFieldDecl(Identifier *f, Scope *scope);
 };
 
 /* This node type is used for those places where an expression is optional.
@@ -190,7 +192,7 @@ class FieldAccess : public LValue
   public:
     FieldAccess(Expr *base, Identifier *field); //ok to pass NULL base
     void BuildScope(Scope *parent);
-    void Check() {}
+    void Check();
 };
 
 /* Like field access, call is used both for qualified base.field()
@@ -207,7 +209,7 @@ class Call : public Expr
   public:
     Call(yyltype loc, Expr *base, Identifier *field, List<Expr*> *args);
     void BuildScope(Scope *parent);
-    void Check() {}
+    void Check();
 };
 
 class NewExpr : public Expr
@@ -217,7 +219,7 @@ class NewExpr : public Expr
     
   public:
     NewExpr(yyltype loc, NamedType *clsType);
-    void Check() {}
+    void Check();
 };
 
 class NewArrayExpr : public Expr

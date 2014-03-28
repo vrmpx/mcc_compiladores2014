@@ -13,13 +13,6 @@ do
 	extension="${filename##*.}"
 	filename="${filename%.*}"
 	OUT=$RESULTS"/"$filename.out
-	$DCC < $f >& $OUT
-	if [ -f "samples/"$filename.out ] ; then
-		diff -a "samples/"$filename.out $OUT > $RESULTS"/"$filename.diff
-		if [ $? -ne 0 ] ; then
-	  		echo $filename " differs"
-		fi
-	else 
-		echo "No "$filename".out found"
-	fi
+
+	$DCC < $f 2>$OUT
 done

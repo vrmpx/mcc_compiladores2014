@@ -36,6 +36,7 @@ class Decl : public Node
     const char* Name() { return id->Name(); }
     virtual void BuildScope(Scope *parent);
     virtual void Check() = 0;
+    virtual bool IsEquivalentTo(Decl* other);
 
 };
 
@@ -46,8 +47,8 @@ class VarDecl : public Decl
     
   public:
     VarDecl(Identifier *name, Type *type);
-
-    void Check() {}
+    bool IsEquivalentTo(Decl* other);
+    void Check();
 };
 
 class ClassDecl : public Decl 
@@ -63,6 +64,11 @@ class ClassDecl : public Decl
 
     void BuildScope(Scope *parent);
     void Check();
+
+  private:
+    void CheckExtends();
+    void CheckExtendedMembers(NamedType *extType);
+    void CheckOverride(Scope *other);
 
 };
 
@@ -91,7 +97,8 @@ class FnDecl : public Decl
 
     Type* GetReturnType() {return returnType; }
     void BuildScope(Scope *parent);
-    void Check() {}
+    void Check();
+    bool IsEquivalentTo(Decl* other);
 };
 
 #endif

@@ -22,6 +22,7 @@ class Decl;
 class VarDecl;
 class Expr;
 class FnDecl;
+class ClassDecl;
 
 class Scope 
 {
@@ -31,15 +32,19 @@ class Scope
   public:
     Hashtable<Decl*> *table;
     FnDecl *fnDecl;
+    ClassDecl *clDecl;
 
   public:
     Scope(): table(new Hashtable<Decl*>), fnDecl(NULL) {}
 
-    void SetParent(Scope *p){parent = p;}
-    Scope* GetParent() {return parent;}
+    void SetParent(Scope *p){ parent = p; }
+    Scope* GetParent() { return parent; }
 
-    void SetFunctionDecl(FnDecl *f){fnDecl = f;}
-    FnDecl* GetFunctionDecl() {return fnDecl;}
+    void SetFunctionDecl(FnDecl *f){ fnDecl = f; }
+    FnDecl* GetFunctionDecl() { return fnDecl; }
+
+    void SetClassDecl(ClassDecl *c){ clDecl = c; }
+    ClassDecl* GetClassDecl() { return clDecl; }
 
     int AddDecl(Decl *decl);
 
