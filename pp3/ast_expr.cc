@@ -45,11 +45,28 @@ CompoundExpr::CompoundExpr(Operator *o, Expr *r)
     (op=o)->SetParent(this);
     (right=r)->SetParent(this);
 }
-   
+void CompoundExpr::BuildScope(Scope *parent){
+    scope->SetParent(parent);
+
+    if(left != NULL)
+        left->BuildScope(scope);
+
+    right->BuildScope(scope);
+} 
   
 ArrayAccess::ArrayAccess(yyltype loc, Expr *b, Expr *s) : LValue(loc) {
     (base=b)->SetParent(this); 
     (subscript=s)->SetParent(this);
+}
+
+void ArrayAccess::BuildScope(Scope *parent){
+    scope->SetParent(parent);
+
+    if(base != NULL)
+        base->BuildScope(scope);
+
+    if(subscript != NULL)
+        subscript->BuildScope(scope);
 }
      
 FieldAccess::FieldAccess(Expr *b, Identifier *f) 
@@ -60,6 +77,12 @@ FieldAccess::FieldAccess(Expr *b, Identifier *f)
     (field=f)->SetParent(this);
 }
 
+void FieldAccess::BuildScope(Scope *parent){
+    scope->SetParent(parent);
+
+    if(base != NULL)
+        base->BuildScope(scope);
+}
 
 Call::Call(yyltype loc, Expr *b, Identifier *f, List<Expr*> *a) : Expr(loc)  {
     Assert(f != NULL && a != NULL); // b can be be NULL (just means no explicit base)
@@ -69,6 +92,16 @@ Call::Call(yyltype loc, Expr *b, Identifier *f, List<Expr*> *a) : Expr(loc)  {
     (actuals=a)->SetParentAll(this);
 }
  
+void Call::BuildScope(Scope *parent){
+    scope->SetParent(parent);
+
+    if(base != NULL)
+        base->BuildScope(scope);
+
+    for(int i = 0; i < actuals->NumElements(); i++)
+        actuals->Nth(i)->BuildScope(scope);
+}
+
 
 NewExpr::NewExpr(yyltype loc, NamedType *c) : Expr(loc) { 
   Assert(c != NULL);
@@ -82,4 +115,10 @@ NewArrayExpr::NewArrayExpr(yyltype loc, Expr *sz, Type *et) : Expr(loc) {
     (elemType=et)->SetParent(this);
 }
 
-       
+void NewArrayExpr::BuildScope(Scope *parent){
+    scope->SetParent(parent);
+
+    size->BuildScope(scope);
+}
+
+

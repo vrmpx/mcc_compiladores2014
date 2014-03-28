@@ -15,20 +15,26 @@
 
 #include "ast.h"
 #include "list.h"
+#include "ast_stmt.h"
+
 
 class Type;
 class NamedType;
 class Identifier;
 class Stmt;
+class Scope;
 
 class Decl : public Node 
 {
   protected:
     Identifier *id;
-  
+    Scope *scope;
+
   public:
     Decl(Identifier *name);
     friend std::ostream& operator<<(std::ostream& out, Decl *d) { return out << d->id; }
+    virtual void BuildScope(Scope *parent);
+    const char* Name() { return id->Name(); }
 };
 
 class VarDecl : public Decl 
@@ -50,6 +56,7 @@ class ClassDecl : public Decl
   public:
     ClassDecl(Identifier *name, NamedType *extends, 
               List<NamedType*> *implements, List<Decl*> *members);
+    void BuildScope(Scope *parent);
 };
 
 class InterfaceDecl : public Decl 
@@ -59,6 +66,7 @@ class InterfaceDecl : public Decl
     
   public:
     InterfaceDecl(Identifier *name, List<Decl*> *members);
+    void BuildScope(Scope *parent);
 };
 
 class FnDecl : public Decl 
@@ -71,6 +79,7 @@ class FnDecl : public Decl
   public:
     FnDecl(Identifier *name, Type *returnType, List<VarDecl*> *formals);
     void SetFunctionBody(Stmt *b);
+    void BuildScope(Scope *parent);
 };
 
 #endif

@@ -15,26 +15,67 @@
 
 #include "list.h"
 #include "ast.h"
+#include "errors.h"
+#include "hashtable.h"
 
 class Decl;
 class VarDecl;
+class ClassDecl;
+class FnDecl;
 class Expr;
-  
+
+
+class Scope 
+{
+  protected:
+    Scope *parent;
+    Hashtable<Decl*> *table;
+    ClassDecl *classDecl;
+    FnDecl *fnDecl;
+
+  public:
+    Scope() : table(new Hashtable<Decl*>), parent(NULL), classDecl(NULL), fnDecl(NULL) {}
+    
+    Scope* GetParent() { return parent; }
+    void SetParent(Scope *p) { parent = p; }
+
+    ClassDecl* GetClassDecl() { return classDecl; }
+    void SetClassDecl(ClassDecl* c){ classDecl = c; }
+
+    FnDecl* GetFunctionDecl() { return fnDecl; }
+    void SetFunctionDecl(FnDecl *f) { fnDecl = f; }
+
+
+    Hashtable<Decl*>* GetTable() { return table; }
+    void AddDecl(Decl* d);
+
+};
+
+
 class Program : public Node
 {
+
+  public:
+     static Scope* globalScope;
+     
   protected:
      List<Decl*> *decls;
      
   public:
      Program(List<Decl*> *declList);
      void Check();
+     void BuildScope();
 };
 
 class Stmt : public Node
 {
+  protected:
+    Scope *scope; 
+
   public:
-     Stmt() : Node() {}
-     Stmt(yyltype loc) : Node(loc) {}
+     Stmt() : Node(), scope(new Scope)  {}
+     Stmt(yyltype loc) : Node(loc), scope(new Scope)  {}
+     virtual void BuildScope(Scope *parent);
 };
 
 class StmtBlock : public Stmt 
@@ -45,6 +86,7 @@ class StmtBlock : public Stmt
     
   public:
     StmtBlock(List<VarDecl*> *variableDeclarations, List<Stmt*> *statements);
+    void BuildScope(Scope *parent);
 };
 
   
@@ -56,6 +98,7 @@ class ConditionalStmt : public Stmt
   
   public:
     ConditionalStmt(Expr *testExpr, Stmt *body);
+    virtual void BuildScope(Scope *parent);
 };
 
 class LoopStmt : public ConditionalStmt 
@@ -87,6 +130,7 @@ class IfStmt : public ConditionalStmt
   
   public:
     IfStmt(Expr *test, Stmt *thenBody, Stmt *elseBody);
+    void BuildScope(Scope *parent); 
 };
 
 class BreakStmt : public Stmt 
@@ -102,6 +146,7 @@ class ReturnStmt : public Stmt
   
   public:
     ReturnStmt(yyltype loc, Expr *expr);
+    void BuildScope(Scope *parent);
 };
 
 class PrintStmt : public Stmt
@@ -111,6 +156,7 @@ class PrintStmt : public Stmt
     
   public:
     PrintStmt(List<Expr*> *arguments);
+    void BuildScope(Scope *parent);
 };
 
 

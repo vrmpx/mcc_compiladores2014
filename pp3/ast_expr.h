@@ -20,7 +20,6 @@
 class NamedType; // for new
 class Type; // for NewArray
 
-
 class Expr : public Stmt 
 {
   public:
@@ -97,6 +96,7 @@ class CompoundExpr : public Expr
   public:
     CompoundExpr(Expr *lhs, Operator *op, Expr *rhs); // for binary
     CompoundExpr(Operator *op, Expr *rhs);             // for unary
+    void BuildScope(Scope *parent);
 };
 
 class ArithmeticExpr : public CompoundExpr 
@@ -153,6 +153,7 @@ class ArrayAccess : public LValue
     
   public:
     ArrayAccess(yyltype loc, Expr *base, Expr *subscript);
+    void BuildScope(Scope *parent);
 };
 
 /* Note that field access is used both for qualified names
@@ -168,6 +169,7 @@ class FieldAccess : public LValue
     
   public:
     FieldAccess(Expr *base, Identifier *field); //ok to pass NULL base
+    void BuildScope(Scope *parent);
 };
 
 /* Like field access, call is used both for qualified base.field()
@@ -183,6 +185,7 @@ class Call : public Expr
     
   public:
     Call(yyltype loc, Expr *base, Identifier *field, List<Expr*> *args);
+    void BuildScope(Scope *parent);
 };
 
 class NewExpr : public Expr
@@ -202,6 +205,7 @@ class NewArrayExpr : public Expr
     
   public:
     NewArrayExpr(yyltype loc, Expr *sizeExpr, Type *elemType);
+    void BuildScope(Scope *parent);
 };
 
 class ReadIntegerExpr : public Expr
