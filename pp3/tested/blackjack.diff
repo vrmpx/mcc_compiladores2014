@@ -1,0 +1,259 @@
+1,258d0
+< 
+< *** Error line 10.
+<   int GenRandom() {
+<       ^^^^^^^^^
+< *** Method 'GenRandom' must match inherited type signature
+< 
+< 
+< *** Error line 6.
+<   void Init(int seedVal) {
+<        ^^^^
+< *** Method 'Init' must match inherited type signature
+< 
+< 
+< *** Error line 15.
+<   int RndInt(int max) {
+<       ^^^^^^
+< *** Method 'RndInt' must match inherited type signature
+< 
+< 
+< *** Error line 4.
+<   int seed;
+<       ^^^^
+< *** Declaration of 'seed' here conflicts with declaration on line 4
+< 
+< 
+< *** Error line 47.
+<   int GetCard() {
+<       ^^^^^^^
+< *** Method 'GetCard' must match inherited type signature
+< 
+< 
+< *** Error line 28.
+<   void Init() {
+<        ^^^^
+< *** Method 'Init' must match inherited type signature
+< 
+< 
+< *** Error line 32.
+<   void Shuffle() {
+<        ^^^^^^^
+< *** Method 'Shuffle' must match inherited type signature
+< 
+< 
+< *** Error line 26.
+<   int[] cards;
+<         ^^^^^
+< *** Declaration of 'cards' here conflicts with declaration on line 26
+< 
+< 
+< *** Error line 25.
+<   int current;
+<       ^^^^^^^
+< *** Declaration of 'current' here conflicts with declaration on line 25
+< 
+< 
+< *** Error line 70.
+<   int DealCard() {
+<       ^^^^^^^^
+< *** Method 'DealCard' must match inherited type signature
+< 
+< 
+< *** Error line 61.
+<   void Init() {
+<        ^^^^
+< *** Method 'Init' must match inherited type signature
+< 
+< 
+< *** Error line 96.
+<   int NumCardsRemaining()
+<       ^^^^^^^^^^^^^^^^^
+< *** Method 'NumCardsRemaining' must match inherited type signature
+< 
+< 
+< *** Error line 85.
+<   void Shuffle() {
+<        ^^^^^^^
+< *** Method 'Shuffle' must match inherited type signature
+< 
+< 
+< *** Error line 58.
+<   Deck[] decks;
+<          ^^^^^
+< *** Declaration of 'decks' here conflicts with declaration on line 58
+< 
+< 
+< *** Error line 59.
+<   int numdealt;
+<       ^^^^^^^^
+< *** Declaration of 'numdealt' here conflicts with declaration on line 59
+< 
+< 
+< *** Error line 129.
+<   bool DoubleDown(BJDeck deck) {
+<        ^^^^^^^^^^
+< *** Method 'DoubleDown' must match inherited type signature
+< 
+< 
+< *** Error line 177.
+<   int GetTotal() { return total;}
+<       ^^^^^^^^
+< *** Method 'GetTotal' must match inherited type signature
+< 
+< 
+< *** Error line 162.
+<   bool HasMoney() { return money > 0; }
+<        ^^^^^^^^
+< *** Method 'HasMoney' must match inherited type signature
+< 
+< 
+< *** Error line 116.
+<   void Hit(BJDeck deck) {
+<        ^^^
+< *** Method 'Hit' must match inherited type signature
+< 
+< 
+< *** Error line 110.
+<   void Init(int num) {
+<        ^^^^
+< *** Method 'Init' must match inherited type signature
+< 
+< 
+< *** Error line 168.
+<   void PlaceBet() {
+<        ^^^^^^^^
+< *** Method 'PlaceBet' must match inherited type signature
+< 
+< 
+< *** Error line 164.
+<   void PrintMoney() {
+<        ^^^^^^^^^^
+< *** Method 'PrintMoney' must match inherited type signature
+< 
+< 
+< *** Error line 179.
+<   void Resolve(int dealer) {
+<        ^^^^^^^
+< *** Method 'Resolve' must match inherited type signature
+< 
+< 
+< *** Error line 141.
+<   void TakeTurn(BJDeck deck) {
+<        ^^^^^^^^
+< *** Method 'TakeTurn' must match inherited type signature
+< 
+< 
+< *** Error line 104.
+<   int aces;
+<       ^^^^
+< *** Declaration of 'aces' here conflicts with declaration on line 104
+< 
+< 
+< *** Error line 106.
+<   int bet;
+<       ^^^
+< *** Declaration of 'bet' here conflicts with declaration on line 106
+< 
+< 
+< *** Error line 107.
+<   int money;
+<       ^^^^^
+< *** Declaration of 'money' here conflicts with declaration on line 107
+< 
+< 
+< *** Error line 108.
+<   string name;
+<          ^^^^
+< *** Declaration of 'name' here conflicts with declaration on line 108
+< 
+< 
+< *** Error line 105.
+<   int numcards;
+<       ^^^^^^^^
+< *** Declaration of 'numcards' here conflicts with declaration on line 105
+< 
+< 
+< *** Error line 103.
+<   int total;
+<       ^^^^^
+< *** Declaration of 'total' here conflicts with declaration on line 103
+< 
+< 
+< *** Error line 196.
+< class Dealer extends Player {
+<                      ^^^^^^
+< *** No declaration found for class 'Player'
+< 
+< 
+< *** Error line 198.
+<   void Init(int id) {
+<        ^^^^
+< *** Method 'Init' must match inherited type signature
+< 
+< 
+< *** Error line 205.
+<   void TakeTurn(BJDeck deck) {
+<        ^^^^^^^^
+< *** Method 'TakeTurn' must match inherited type signature
+< 
+< 
+< *** Error line 278.
+<   void PlayOneGame() {
+<        ^^^^^^^^^^^
+< *** Method 'PlayOneGame' must match inherited type signature
+< 
+< 
+< *** Error line 270.
+<   void PrintAllMoney() {
+<        ^^^^^^^^^^^^^
+< *** Method 'PrintAllMoney' must match inherited type signature
+< 
+< 
+< *** Error line 261.
+<   void ResolveAllPlayers() {
+<        ^^^^^^^^^^^^^^^^^
+< *** Method 'ResolveAllPlayers' must match inherited type signature
+< 
+< 
+< *** Error line 223.
+<   void SetupGame() {
+<        ^^^^^^^^^
+< *** Method 'SetupGame' must match inherited type signature
+< 
+< 
+< *** Error line 236.
+<   void SetupPlayers() {
+<        ^^^^^^^^^^^^
+< *** Method 'SetupPlayers' must match inherited type signature
+< 
+< 
+< *** Error line 248.
+<   void TakeAllBets() {
+<        ^^^^^^^^^^^
+< *** Method 'TakeAllBets' must match inherited type signature
+< 
+< 
+< *** Error line 255.
+<   void TakeAllTurns() {
+<        ^^^^^^^^^^^^
+< *** Method 'TakeAllTurns' must match inherited type signature
+< 
+< 
+< *** Error line 219.
+<   Dealer dealer;
+<          ^^^^^^
+< *** Declaration of 'dealer' here conflicts with declaration on line 219
+< 
+< 
+< *** Error line 220.
+<   BJDeck deck;
+<          ^^^^
+< *** Declaration of 'deck' here conflicts with declaration on line 220
+< 
+< 
+< *** Error line 218.
+<   Player[] players;
+<            ^^^^^^^
+< *** Declaration of 'players' here conflicts with declaration on line 218
+< 

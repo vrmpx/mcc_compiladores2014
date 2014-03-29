@@ -1,0 +1,55 @@
+1,54d0
+< 
+< *** Error line 13.
+<   int GetHeight() {	
+<       ^^^^^^^^^
+< *** Method 'GetHeight' must match inherited type signature
+< 
+< 
+< *** Error line 17.
+<   Animal GetMom() {
+<          ^^^^^^
+< *** Method 'GetMom' must match inherited type signature
+< 
+< 
+< *** Error line 8.
+<   void InitAnimal(int h, Animal mom) {
+<        ^^^^^^^^^^
+< *** Method 'InitAnimal' must match inherited type signature
+< 
+< 
+< *** Error line 6.
+<   int height;
+<       ^^^^^^
+< *** Declaration of 'height' here conflicts with declaration on line 6
+< 
+< 
+< *** Error line 7.
+<   Animal mother;
+<          ^^^^^^
+< *** Declaration of 'mother' here conflicts with declaration on line 7
+< 
+< 
+< *** Error line 22.
+< class Cow extends Animal {
+<                   ^^^^^^
+< *** No declaration found for class 'Animal'
+< 
+< 
+< *** Error line 24.
+<   void InitCow(int h, Animal m, bool spot) {
+<        ^^^^^^^
+< *** Method 'InitCow' must match inherited type signature
+< 
+< 
+< *** Error line 28.
+<   bool IsSpottedCow () {
+<        ^^^^^^^^^^^^
+< *** Method 'IsSpottedCow' must match inherited type signature
+< 
+< 
+< *** Error line 23.
+<   bool isSpotted;
+<        ^^^^^^^^^
+< *** Declaration of 'isSpotted' here conflicts with declaration on line 23
+< 

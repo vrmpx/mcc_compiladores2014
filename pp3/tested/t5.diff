@@ -1,0 +1,25 @@
+1,24d0
+< 
+< *** Error line 10.
+<   void Init(int w, int h) {}
+<        ^^^^
+< *** Method 'Init' must match inherited type signature
+< 
+< 
+< *** Error line 11.
+<   void Moo() {}
+<        ^^^
+< *** Method 'Moo' must match inherited type signature
+< 
+< 
+< *** Error line 7.
+<   int height;
+<       ^^^^^^
+< *** Declaration of 'height' here conflicts with declaration on line 7
+< 
+< 
+< *** Error line 8.
+<   int weight;
+<       ^^^^^^
+< *** Declaration of 'weight' here conflicts with declaration on line 8
+< 

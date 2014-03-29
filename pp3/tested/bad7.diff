@@ -1,0 +1,7 @@
+6a7,12
+> 
+> *** Error line 13.
+>            Unknown b;
+>            ^^^^^^^
+> *** No declaration found for type 'Unknown'
+> 

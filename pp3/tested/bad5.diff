@@ -1,0 +1,7 @@
+13,18d12
+< 
+< *** Error line 5.
+<     void Winky(int a, double b, int[] a) {
+<          ^^^^^
+< *** Method 'Winky' must match inherited type signature
+< 

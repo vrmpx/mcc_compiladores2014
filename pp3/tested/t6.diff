@@ -1,0 +1,31 @@
+1,30d0
+< 
+< *** Error line 10.
+< class Ruler implements Streamable,Comparable {
+<                        ^^^^^^^^^^
+< *** No declaration found for interface 'Streamable'
+< 
+< 
+< *** Error line 10.
+< class Ruler implements Streamable,Comparable {
+<                                   ^^^^^^^^^^
+< *** No declaration found for interface 'Comparable'
+< 
+< 
+< *** Error line 13.
+<    Streamable GetStream() { return this; }
+<               ^^^^^^^^^
+< *** Method 'GetStream' must match inherited type signature
+< 
+< 
+< *** Error line 11.
+<    void Stream(int b) {}
+<         ^^^^^^
+< *** Method 'Stream' must match inherited type signature
+< 
+< 
+< *** Error line 12.
+<    bool equals(Comparable other) { return false; }
+<         ^^^^^^
+< *** Method 'equals' must match inherited type signature
+< 

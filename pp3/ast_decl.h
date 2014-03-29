@@ -34,7 +34,9 @@ class Decl : public Node
     Decl(Identifier *name);
     friend std::ostream& operator<<(std::ostream& out, Decl *d) { return out << d->id; }
     virtual void BuildScope(Scope *parent);
+    virtual void Check() {}
     const char* Name() { return id->Name(); }
+    virtual Scope* GetScope() { return scope; }
 };
 
 class VarDecl : public Decl 
@@ -44,6 +46,7 @@ class VarDecl : public Decl
     
   public:
     VarDecl(Identifier *name, Type *type);
+    void Check();
 };
 
 class ClassDecl : public Decl 
@@ -57,6 +60,12 @@ class ClassDecl : public Decl
     ClassDecl(Identifier *name, NamedType *extends, 
               List<NamedType*> *implements, List<Decl*> *members);
     void BuildScope(Scope *parent);
+    void Check();
+
+  private:
+    void CheckExtends();
+    void CheckImplements();
+
 };
 
 class InterfaceDecl : public Decl 
@@ -80,6 +89,7 @@ class FnDecl : public Decl
     FnDecl(Identifier *name, Type *returnType, List<VarDecl*> *formals);
     void SetFunctionBody(Stmt *b);
     void BuildScope(Scope *parent);
+    void Check();
 };
 
 #endif

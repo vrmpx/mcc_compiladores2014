@@ -19,7 +19,7 @@ do
 	printf "Checking %s: " $filename
 	if ! cmp -s $OUT "samples/"$filename.out ; then
 		echo "----------------- FAIL -----------------"
-		diff $OUT "samples/"$filename.out 
+		diff $OUT "samples/"$filename.out | tee $RESULTS/$filename.diff
 		echo "----------------- FAIL -----------------"
 	else
 		echo "----------------- PASS -----------------"

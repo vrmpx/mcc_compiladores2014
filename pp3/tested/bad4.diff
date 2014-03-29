@@ -1,0 +1,7 @@
+12a13,18
+> 
+> *** Error line 14.
+>   ABlock[] test;
+>   ^^^^^^
+> *** No declaration found for type 'ABlock'
+> 

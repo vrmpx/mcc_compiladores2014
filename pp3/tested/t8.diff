@@ -1,0 +1,25 @@
+1,24d0
+< 
+< *** Error line 3.
+<     void Sleep() {}
+<          ^^^^^
+< *** Method 'Sleep' must match inherited type signature
+< 
+< 
+< *** Error line 6.
+< class GradStudent extends Sleeper implements Student
+<                           ^^^^^^^
+< *** No declaration found for class 'Sleeper'
+< 
+< 
+< *** Error line 6.
+< class GradStudent extends Sleeper implements Student
+<                                              ^^^^^^^
+< *** No declaration found for interface 'Student'
+< 
+< 
+< *** Error line 8.
+<     void Study(Student[] group) {}
+<          ^^^^^
+< *** Method 'Study' must match inherited type signature
+< 

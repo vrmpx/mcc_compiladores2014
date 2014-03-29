@@ -1,0 +1,7 @@
+7,12d6
+< 
+< *** Error line 10.
+<   void Rutabaga(int a) {}
+<        ^^^^^^^^
+< *** Method 'Rutabaga' must match inherited type signature
+< 

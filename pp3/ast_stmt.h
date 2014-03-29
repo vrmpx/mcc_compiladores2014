@@ -76,6 +76,7 @@ class Stmt : public Node
      Stmt() : Node(), scope(new Scope)  {}
      Stmt(yyltype loc) : Node(loc), scope(new Scope)  {}
      virtual void BuildScope(Scope *parent);
+     void Check(){}
 };
 
 class StmtBlock : public Stmt 
@@ -87,6 +88,7 @@ class StmtBlock : public Stmt
   public:
     StmtBlock(List<VarDecl*> *variableDeclarations, List<Stmt*> *statements);
     void BuildScope(Scope *parent);
+    void Check();
 };
 
   
@@ -99,6 +101,7 @@ class ConditionalStmt : public Stmt
   public:
     ConditionalStmt(Expr *testExpr, Stmt *body);
     virtual void BuildScope(Scope *parent);
+    void Check();
 };
 
 class LoopStmt : public ConditionalStmt 
@@ -131,6 +134,7 @@ class IfStmt : public ConditionalStmt
   public:
     IfStmt(Expr *test, Stmt *thenBody, Stmt *elseBody);
     void BuildScope(Scope *parent); 
+    void Check();
 };
 
 class BreakStmt : public Stmt 

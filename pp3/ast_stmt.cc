@@ -37,7 +37,8 @@ void Program::Check() {
      */
      BuildScope();
 
-
+     for(int i = 0; i < decls->NumElements(); i++)
+        decls->Nth(i)->Check();
 }
 
 void Program::BuildScope() {
@@ -58,6 +59,14 @@ StmtBlock::StmtBlock(List<VarDecl*> *d, List<Stmt*> *s) {
     Assert(d != NULL && s != NULL);
     (decls=d)->SetParentAll(this);
     (stmts=s)->SetParentAll(this);
+}
+
+void StmtBlock::Check(){
+    for(int i = 0; i < decls->NumElements(); i++)
+        decls->Nth(i)->Check();
+
+    for(int i = 0; i < stmts->NumElements(); i++)
+        stmts->Nth(i)->Check();
 }
 
 void StmtBlock::BuildScope(Scope *parent){
@@ -85,6 +94,11 @@ void ConditionalStmt::BuildScope(Scope *parent) {
     body->BuildScope(scope);
 }
 
+void ConditionalStmt::Check() {
+    test->Check();
+    body->Check();
+}
+
 ForStmt::ForStmt(Expr *i, Expr *t, Expr *s, Stmt *b): LoopStmt(t, b) { 
     Assert(i != NULL && t != NULL && s != NULL && b != NULL);
     (init=i)->SetParent(this);
@@ -105,6 +119,14 @@ void IfStmt::BuildScope(Scope *parent) {
 
     if(elseBody != NULL)
         elseBody->BuildScope(scope);
+}
+
+void IfStmt::Check() {
+    test->Check();
+    body->Check();
+
+    if(elseBody != NULL)
+        elseBody->Check();
 }
 
 ReturnStmt::ReturnStmt(yyltype loc, Expr *e) : Stmt(loc) { 

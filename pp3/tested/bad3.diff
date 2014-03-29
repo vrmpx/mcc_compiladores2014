@@ -1,0 +1,7 @@
+1a2,7
+> *** Error line 1.
+> void Mystery(Unknown a) {}
+>              ^^^^^^^
+> *** No declaration found for type 'Unknown'
+> 
+> 

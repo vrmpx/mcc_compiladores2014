@@ -1,0 +1,145 @@
+1,144d0
+< 
+< *** Error line 9.
+<   int Get(int x, int y) {}
+<       ^^^
+< *** Method 'Get' must match inherited type signature
+< 
+< 
+< *** Error line 7.
+<   void Init() {}
+<        ^^^^
+< *** Method 'Init' must match inherited type signature
+< 
+< 
+< *** Error line 11.
+<   void PrintMatrix() {
+<        ^^^^^^^^^^^
+< *** Method 'PrintMatrix' must match inherited type signature
+< 
+< 
+< *** Error line 20.
+<   void SeedMatrix() {
+<        ^^^^^^^^^^
+< *** Method 'SeedMatrix' must match inherited type signature
+< 
+< 
+< *** Error line 8.
+<   void Set(int x, int y, int value) {} 
+<        ^^^
+< *** Method 'Set' must match inherited type signature
+< 
+< 
+< *** Error line 37.
+< class DenseMatrix extends Matrix {
+<                           ^^^^^^
+< *** No declaration found for class 'Matrix'
+< 
+< 
+< *** Error line 56.
+<   int Get(int x, int y) {
+<       ^^^
+< *** Method 'Get' must match inherited type signature
+< 
+< 
+< *** Error line 39.
+<   void Init() {
+<        ^^^^
+< *** Method 'Init' must match inherited type signature
+< 
+< 
+< *** Error line 53.
+<   void Set(int x, int y, int value) {
+<        ^^^
+< *** Method 'Set' must match inherited type signature
+< 
+< 
+< *** Error line 38.
+<   int[][] m;
+<           ^
+< *** Declaration of 'm' here conflicts with declaration on line 38
+< 
+< 
+< *** Error line 73.
+<   int GetData() { return data;}
+<       ^^^^^^^
+< *** Method 'GetData' must match inherited type signature
+< 
+< 
+< *** Error line 71.
+<   SparseItem GetNext() { return next;}
+<              ^^^^^^^
+< *** Method 'GetNext' must match inherited type signature
+< 
+< 
+< *** Error line 72.
+<   int GetY() { return y;}
+<       ^^^^
+< *** Method 'GetY' must match inherited type signature
+< 
+< 
+< *** Error line 66.
+<   void Init(int d, int y, SparseItem next) {
+<        ^^^^
+< *** Method 'Init' must match inherited type signature
+< 
+< 
+< *** Error line 74.
+<   void SetData(int val) { data = val;}
+<        ^^^^^^^
+< *** Method 'SetData' must match inherited type signature
+< 
+< 
+< *** Error line 63.
+<   int data;
+<       ^^^^
+< *** Declaration of 'data' here conflicts with declaration on line 63
+< 
+< 
+< *** Error line 65.
+<   SparseItem next;
+<              ^^^^
+< *** Declaration of 'next' here conflicts with declaration on line 65
+< 
+< 
+< *** Error line 64.
+<   int y;
+<       ^
+< *** Declaration of 'y' here conflicts with declaration on line 64
+< 
+< 
+< *** Error line 79.
+< class SparseMatrix extends Matrix {
+<                            ^^^^^^
+< *** No declaration found for class 'Matrix'
+< 
+< 
+< *** Error line 91.
+<   SparseItem Find(int x, int y) {
+<              ^^^^
+< *** Method 'Find' must match inherited type signature
+< 
+< 
+< *** Error line 115.
+<   int Get(int x, int y) {
+<       ^^^
+< *** Method 'Get' must match inherited type signature
+< 
+< 
+< *** Error line 81.
+<   void Init() {
+<        ^^^^
+< *** Method 'Init' must match inherited type signature
+< 
+< 
+< *** Error line 103.
+<   void Set(int x, int y, int value) {
+<        ^^^
+< *** Method 'Set' must match inherited type signature
+< 
+< 
+< *** Error line 80.
+<   SparseItem[] m;
+<                ^
+< *** Declaration of 'm' here conflicts with declaration on line 80
+< 
