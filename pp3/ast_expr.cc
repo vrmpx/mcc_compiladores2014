@@ -109,21 +109,21 @@ void FieldAccess::BuildScope(Scope *parent){
 
 }
 
-void FieldAccess::Check(){
+void FieldAccess::Check() {
     if (base != NULL)
         base->Check();
 
     Decl *d = NULL;
 
-    if (base == NULL){
+    if (base == NULL) {
         ClassDecl *c = GetClassDecl(scope);
-        if (c == NULL){
-            if ((d = GetFieldDecl(field, scope)) == NULL){
+        if (c == NULL) {
+            if ((d = GetFieldDecl(field, scope)) == NULL) {
                 ReportError::IdentifierNotDeclared(field, LookingForVariable);
                 return;
             }
-        }
-    }
+        } 
+    } 
 
     if (dynamic_cast<VarDecl*>(d) == NULL)
         ReportError::IdentifierNotDeclared(field, LookingForVariable);
@@ -151,17 +151,12 @@ void Call::Check() {
     if (base != NULL)
         base->Check();
 
-    Decl *d;
-    Type *t;
-    if ( base == NULL ){
-        ClassDecl *c = GetClassDecl(scope);
-        if(c == NULL){
-            if ((d = GetFieldDecl(field, scope)) == NULL){
-                ReportError::IdentifierNotDeclared(field, LookingForVariable);
-                return;
-            }
-        }
-    }
+    CheckActuals();
+}
+
+void Call::CheckActuals(){
+    for (int i = 0, n = actuals->NumElements(); i < n; ++i)
+        actuals->Nth(i)->Check();
 }
 
 NewExpr::NewExpr(yyltype loc, NamedType *c) : Expr(loc) { 

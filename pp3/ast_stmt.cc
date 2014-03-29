@@ -143,8 +143,6 @@ void IfStmt::Check() {
 
 }
 
-void BreakStmt::Check() {}
-
 ReturnStmt::ReturnStmt(yyltype loc, Expr *e) : Stmt(loc) { 
     Assert(e != NULL);
     (expr=e)->SetParent(this);
@@ -156,7 +154,7 @@ void ReturnStmt::BuildScope(Scope *parent){
 }
   
 void ReturnStmt::Check() {
-    expr->Check();
+    //expr->Check();
 }
 
 PrintStmt::PrintStmt(List<Expr*> *a) {    
@@ -176,8 +174,8 @@ void PrintStmt::Check() {
     //PP4
     // ???
 
-    for(int i = 0; i < args->NumElements(); i++)
-        args->Nth(i)->Check();
+    // for(int i = 0; i < args->NumElements(); i++)
+    //     args->Nth(i)->Check();
 
 }
 

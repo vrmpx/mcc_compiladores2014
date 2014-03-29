@@ -210,6 +210,9 @@ class Call : public Expr
     Call(yyltype loc, Expr *base, Identifier *field, List<Expr*> *args);
     void BuildScope(Scope *parent);
     void Check();
+
+  private:
+    void CheckActuals();
 };
 
 class NewExpr : public Expr

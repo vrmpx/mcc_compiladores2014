@@ -147,7 +147,7 @@ class BreakStmt : public Stmt
   public:
     BreakStmt(yyltype loc) : Stmt(loc) {}
 
-   void Check();
+   void Check() {}
 };
 
 class ReturnStmt : public Stmt  
