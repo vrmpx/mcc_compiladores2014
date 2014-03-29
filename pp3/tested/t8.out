@@ -1,0 +1,6 @@
+
+*** Error line 8.
+    void Study(Student[] group) {}
+               ^^^^^^^
+*** No declaration found for type 'Student'
+

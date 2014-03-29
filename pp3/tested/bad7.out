@@ -4,3 +4,9 @@
             ^
 *** Declaration of 'b' here conflicts with declaration on line 6
 
+
+*** Error line 13.
+           Unknown b;
+           ^^^^^^^
+*** No declaration found for type 'Unknown'
+

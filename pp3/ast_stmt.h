@@ -76,7 +76,7 @@ class Stmt : public Node
      Stmt() : Node(), scope(new Scope)  {}
      Stmt(yyltype loc) : Node(loc), scope(new Scope)  {}
      virtual void BuildScope(Scope *parent);
-     void Check(){}
+     virtual void Check() {};
 };
 
 class StmtBlock : public Stmt 
@@ -161,6 +161,7 @@ class PrintStmt : public Stmt
   public:
     PrintStmt(List<Expr*> *arguments);
     void BuildScope(Scope *parent);
+    void Check();
 };
 
 

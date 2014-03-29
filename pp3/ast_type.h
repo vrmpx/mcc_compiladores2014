@@ -34,6 +34,8 @@ class Type : public Node
     friend std::ostream& operator<<(std::ostream& out, Type *t) { t->PrintToStream(out); return out; }
     virtual bool IsEquivalentTo(Type *other) { return this == other; }
     virtual void ReportNotDeclaredIdentifier(reasonT reason) { return; }
+    virtual bool IsPrimitive() { return true; }
+    virtual const char* Name() { return typeName; }
 };
 
 class NamedType : public Type 
@@ -47,6 +49,7 @@ class NamedType : public Type
     void PrintToStream(std::ostream& out) { out << id; }
     void ReportNotDeclaredIdentifier(reasonT reason);
     const char* Name() { return id->Name(); }
+    bool IsPrimitive() { return false; }
 };
 
 class ArrayType : public Type 
@@ -58,6 +61,9 @@ class ArrayType : public Type
     ArrayType(yyltype loc, Type *elemType);
     
     void PrintToStream(std::ostream& out) { out << elemType << "[]"; }
+    bool IsPrimitive() { return false; }
+    const char* Name() { return elemType->Name(); }
+    void ReportNotDeclaredIdentifier(reasonT reason);
 };
 
  

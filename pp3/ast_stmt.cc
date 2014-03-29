@@ -62,6 +62,8 @@ StmtBlock::StmtBlock(List<VarDecl*> *d, List<Stmt*> *s) {
 }
 
 void StmtBlock::Check(){
+
+
     for(int i = 0; i < decls->NumElements(); i++)
         decls->Nth(i)->Check();
 
@@ -95,6 +97,7 @@ void ConditionalStmt::BuildScope(Scope *parent) {
 }
 
 void ConditionalStmt::Check() {
+
     test->Check();
     body->Check();
 }
@@ -122,6 +125,7 @@ void IfStmt::BuildScope(Scope *parent) {
 }
 
 void IfStmt::Check() {
+
     test->Check();
     body->Check();
 
@@ -149,4 +153,9 @@ void PrintStmt::BuildScope(Scope *parent) {
 
     for(int i = 0; i < args->NumElements(); i++)
         args->Nth(i)->BuildScope(scope);
+}
+
+void PrintStmt::Check(){
+    for (int i = 0, n = args->NumElements(); i < n; ++i)
+        args->Nth(i)->Check();
 }

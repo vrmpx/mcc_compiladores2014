@@ -53,6 +53,13 @@ void CompoundExpr::BuildScope(Scope *parent){
 
     right->BuildScope(scope);
 } 
+
+void CompoundExpr::Check(){
+    if(left != NULL)
+        left->Check();
+
+    right->Check();
+}
   
 ArrayAccess::ArrayAccess(yyltype loc, Expr *b, Expr *s) : LValue(loc) {
     (base=b)->SetParent(this); 
@@ -100,6 +107,15 @@ void Call::BuildScope(Scope *parent){
 
     for(int i = 0; i < actuals->NumElements(); i++)
         actuals->Nth(i)->BuildScope(scope);
+}
+
+void Call::Check(){
+    if(base != NULL)
+        base->Check();
+
+    for(int i = 0; i < actuals->NumElements(); i++){
+        actuals->Nth(i)->Check();
+    }
 }
 
 

@@ -22,7 +22,20 @@ VarDecl::VarDecl(Identifier *n, Type *t) : Decl(n) {
 }
 
 void VarDecl::Check() {
+    if(type->IsPrimitive())
+        return;
 
+    Scope *s = scope;
+    Decl* d;
+    while(s != NULL){
+        if ((d = s->GetTable()->Lookup(type->Name())) != NULL){
+            if(dynamic_cast<ClassDecl*>(d) == NULL && dynamic_cast<InterfaceDecl*>(d) == NULL)
+                type->ReportNotDeclaredIdentifier(LookingForType);
+            return;   
+        }
+        s = s->GetParent();
+    }
+    type->ReportNotDeclaredIdentifier(LookingForType);
 }
 
 ClassDecl::ClassDecl(Identifier *n, NamedType *ex, List<NamedType*> *imp, List<Decl*> *m) : Decl(n) {
@@ -118,5 +131,9 @@ void FnDecl::BuildScope(Scope *parent) {
 }
 
 void FnDecl::Check() {
+   for (int i = 0; i < formals->NumElements(); i++)
+        formals->Nth(i)->Check();
 
+    if (body != NULL)
+        body->Check();
 }

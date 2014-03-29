@@ -97,6 +97,7 @@ class CompoundExpr : public Expr
     CompoundExpr(Expr *lhs, Operator *op, Expr *rhs); // for binary
     CompoundExpr(Operator *op, Expr *rhs);             // for unary
     void BuildScope(Scope *parent);
+    void Check();
 };
 
 class ArithmeticExpr : public CompoundExpr 
@@ -186,6 +187,7 @@ class Call : public Expr
   public:
     Call(yyltype loc, Expr *base, Identifier *field, List<Expr*> *args);
     void BuildScope(Scope *parent);
+    void Check();
 };
 
 class NewExpr : public Expr

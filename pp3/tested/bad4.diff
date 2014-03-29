@@ -1,4 +1,18 @@
-12a13,18
+1c1,18
+< ./testAll.sh: line 17: ./dcc: No such file or directory
+---
+> 
+> *** Error line 9.
+> class Block {
+>       ^^^^^
+> *** Declaration of 'Block' here conflicts with declaration on line 5
+> 
+> 
+> *** Error line 17.
+> int Shape;
+>     ^^^^^
+> *** Declaration of 'Shape' here conflicts with declaration on line 1
+> 
 > 
 > *** Error line 14.
 >   ABlock[] test;

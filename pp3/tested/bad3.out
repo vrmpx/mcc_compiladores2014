@@ -1,4 +1,10 @@
 
+*** Error line 1.
+void Mystery(Unknown a) {}
+             ^^^^^^^
+*** No declaration found for type 'Unknown'
+
+
 *** Error line 3.
 class Trouble extends Missing implements Gone
                       ^^^^^^^

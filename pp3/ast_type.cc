@@ -45,4 +45,7 @@ ArrayType::ArrayType(yyltype loc, Type *et) : Type(loc) {
     (elemType=et)->SetParent(this);
 }
 
+void ArrayType::ReportNotDeclaredIdentifier(reasonT reason){
+	elemType->ReportNotDeclaredIdentifier(reason);
+}
 
