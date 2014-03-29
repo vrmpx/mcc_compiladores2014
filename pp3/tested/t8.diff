@@ -2,6 +2,6 @@
 < 
 < *** Error line 8.
 <     void Study(Student[] group) {}
-<                ^^^^^^^
-< *** No declaration found for type 'Student'
+<          ^^^^^
+< *** Method 'Study' must match inherited type signature
 < 

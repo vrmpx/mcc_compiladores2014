@@ -50,6 +50,8 @@ class NamedType : public Type
     void ReportNotDeclaredIdentifier(reasonT reason);
     const char* Name() { return id->Name(); }
     bool IsPrimitive() { return false; }
+    bool IsEqualTo(Type *other);
+    bool IsEquivalentTo(Type *other);
 };
 
 class ArrayType : public Type 
@@ -64,6 +66,7 @@ class ArrayType : public Type
     bool IsPrimitive() { return false; }
     const char* Name() { return elemType->Name(); }
     void ReportNotDeclaredIdentifier(reasonT reason);
+    bool IsEquivalentTo(Type *other);
 };
 
  

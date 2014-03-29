@@ -1,0 +1,6 @@
+
+*** Error line 11.
+    void Method3(bool a) {}
+         ^^^^^^^
+*** Method 'Method3' must match inherited type signature
+

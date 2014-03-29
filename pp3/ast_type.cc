@@ -40,6 +40,15 @@ void NamedType::ReportNotDeclaredIdentifier(reasonT reason){
 	ReportError::IdentifierNotDeclared(id, reason);
 }
 
+bool NamedType::IsEquivalentTo(Type *other) {
+    NamedType* nOther = dynamic_cast<NamedType*>(other);
+
+    if(other == NULL)
+    	return false;
+
+    return strcmp(id->Name(), nOther->id->Name()) == 0;
+}
+
 ArrayType::ArrayType(yyltype loc, Type *et) : Type(loc) {
     Assert(et != NULL);
     (elemType=et)->SetParent(this);
@@ -49,3 +58,11 @@ void ArrayType::ReportNotDeclaredIdentifier(reasonT reason){
 	elemType->ReportNotDeclaredIdentifier(reason);
 }
 
+bool ArrayType::IsEquivalentTo(Type *other) {
+    ArrayType *arrayOther = dynamic_cast<ArrayType*>(other);
+
+    if (arrayOther == NULL)
+        return false;
+
+    return elemType->IsEquivalentTo(arrayOther->elemType);
+}

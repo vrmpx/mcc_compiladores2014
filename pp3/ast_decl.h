@@ -37,6 +37,7 @@ class Decl : public Node
     virtual void Check() {}
     const char* Name() { return id->Name(); }
     virtual Scope* GetScope() { return scope; }
+    virtual bool IsEquivalentTo(Decl* d);
 };
 
 class VarDecl : public Decl 
@@ -47,6 +48,7 @@ class VarDecl : public Decl
   public:
     VarDecl(Identifier *name, Type *type);
     void Check();
+    bool IsEquivalentTo(Decl* d);
 };
 
 class ClassDecl : public Decl 
@@ -61,10 +63,14 @@ class ClassDecl : public Decl
               List<NamedType*> *implements, List<Decl*> *members);
     void BuildScope(Scope *parent);
     void Check();
+    NamedType* GetExtends(){ return extends; }
+    List<NamedType*>* GetImplements() { return implements; }
 
   private:
     void CheckExtends();
     void CheckImplements();
+    void CheckImplemented(NamedType *imp);
+    void CheckOverrides(Scope *other);
 
 };
 
@@ -90,6 +96,7 @@ class FnDecl : public Decl
     void SetFunctionBody(Stmt *b);
     void BuildScope(Scope *parent);
     void Check();
+    bool IsEquivalentTo(Decl* d);
 };
 
 #endif

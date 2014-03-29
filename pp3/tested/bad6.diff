@@ -1,10 +1,4 @@
-0a1,12
-> 
-> *** Error line 11.
->     void Method3(bool a) {}
->          ^^^^^^^
-> *** Method 'Method3' must match inherited type signature
-> 
+6a7,12
 > 
 > *** Error line 4.
 >     int Method2(int[] a, Base c, double d) {}
