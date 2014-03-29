@@ -14,8 +14,8 @@
 
 #include "ast.h"
 #include "list.h"
-#include <iostream>
 #include "errors.h"
+#include <iostream>
 
 
 class Type : public Node 
@@ -33,11 +33,9 @@ class Type : public Node
     virtual void PrintToStream(std::ostream& out) { out << typeName; }
     friend std::ostream& operator<<(std::ostream& out, Type *t) { t->PrintToStream(out); return out; }
     virtual bool IsEquivalentTo(Type *other) { return this == other; }
-
-
+    virtual void ReportNotDeclaredIdentifier(reasonT reason) { return; }
     virtual bool IsPrimitive() { return true; }
     virtual const char* Name() { return typeName; }
-    virtual void ReportNotDeclaredIdentifier(reasonT reason) { return; }
 };
 
 class NamedType : public Type 
@@ -49,10 +47,11 @@ class NamedType : public Type
     NamedType(Identifier *i);
     
     void PrintToStream(std::ostream& out) { out << id; }
-    bool IsPrimitive() { return false; }
-    Identifier* ID() { return id; }
-    const char* Name() { return id->Name(); }
     void ReportNotDeclaredIdentifier(reasonT reason);
+    const char* Name() { return id->Name(); }
+    bool IsPrimitive() { return false; }
+    bool IsEqualTo(Type *other);
+    bool IsEquivalentTo(Type *other);
 };
 
 class ArrayType : public Type 
@@ -64,9 +63,10 @@ class ArrayType : public Type
     ArrayType(yyltype loc, Type *elemType);
     
     void PrintToStream(std::ostream& out) { out << elemType << "[]"; }
-    void ReportNotDeclaredIdentifier(reasonT reason);
-    const char* Name() { return elemType->Name(); }
     bool IsPrimitive() { return false; }
+    const char* Name() { return elemType->Name(); }
+    void ReportNotDeclaredIdentifier(reasonT reason);
+    bool IsEquivalentTo(Type *other);
 };
 
  

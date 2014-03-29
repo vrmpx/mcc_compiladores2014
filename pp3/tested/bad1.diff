@@ -1,0 +1,9 @@
+1c1,6
+< ./testAll.sh: line 17: ./dcc: No such file or directory
+---
+> 
+> *** Error line 6.
+>   double b;
+>          ^
+> *** Declaration of 'b' here conflicts with declaration on line 4
+> 

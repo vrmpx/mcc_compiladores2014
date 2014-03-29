@@ -154,7 +154,7 @@ void ReportError::ReturnMismatch(ReturnStmt *rStmt, Type *given, Type *expected)
 
 void ReportError::FieldNotFoundInBase(Identifier *field, Type *base) {
     stringstream s;
-    s << base << " has no such field '" << field <<"'" <<'\0';
+    s << base << " has no such field '" << field <<"'" ;
     OutputError(field->GetLocation(), s.str());
 }
      

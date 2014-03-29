@@ -1,0 +1,13 @@
+1,12d0
+< 
+< *** Error line 13.
+<    Streamable GetStream() { return this; }
+<               ^^^^^^^^^
+< *** Method 'GetStream' must match inherited type signature
+< 
+< 
+< *** Error line 12.
+<    bool equals(Comparable other) { return false; }
+<         ^^^^^^
+< *** Method 'equals' must match inherited type signature
+< 

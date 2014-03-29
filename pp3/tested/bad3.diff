@@ -1,0 +1,12 @@
+10,11c10,11
+<                                          ^^^^
+< *** No declaration found for interface 'Gone'
+---
+>                       ^^^^^^^
+> *** No declaration found for class 'Missing'
+16,17c16,17
+<                       ^^^^^^^
+< *** No declaration found for class 'Missing'
+---
+>                                          ^^^^
+> *** No declaration found for interface 'Gone'

@@ -6,24 +6,7 @@
 #include "ast_type.h"
 #include "ast_decl.h"
 #include <string.h>
-#include "errors.h"
 
-ClassDecl* Expr::GetClassDecl(Scope *scope) {
-    ClassDecl *c = NULL;
-    Scope *s = scope;
-    while(s != NULL && (c = s->GetClassDecl()) == NULL)
-        s = s->GetParent();
-    return c;
-}
-
-Decl* Expr::GetFieldDecl(Identifier *f, Scope *scope){
-    Decl *lookup = NULL;
-    Scope *s = scope;
-    while(s != NULL && (lookup = s->table->Lookup(f->Name())) == NULL){
-        s = s->GetParent();
-    }
-    return lookup;
-}
 
 
 IntConstant::IntConstant(yyltype loc, int val) : Expr(loc) {
@@ -62,16 +45,16 @@ CompoundExpr::CompoundExpr(Operator *o, Expr *r)
     (op=o)->SetParent(this);
     (right=r)->SetParent(this);
 }
-void CompoundExpr::BuildScope(Scope *parent) {
+void CompoundExpr::BuildScope(Scope *parent){
     scope->SetParent(parent);
 
     if(left != NULL)
         left->BuildScope(scope);
 
     right->BuildScope(scope);
-}
+} 
 
-void CompoundExpr::Check() {
+void CompoundExpr::Check(){
     if(left != NULL)
         left->Check();
 
@@ -82,7 +65,7 @@ ArrayAccess::ArrayAccess(yyltype loc, Expr *b, Expr *s) : LValue(loc) {
     (base=b)->SetParent(this); 
     (subscript=s)->SetParent(this);
 }
-     
+
 void ArrayAccess::BuildScope(Scope *parent){
     scope->SetParent(parent);
 
@@ -92,7 +75,7 @@ void ArrayAccess::BuildScope(Scope *parent){
     if(subscript != NULL)
         subscript->BuildScope(scope);
 }
-
+     
 FieldAccess::FieldAccess(Expr *b, Identifier *f) 
   : LValue(b? Join(b->GetLocation(), f->GetLocation()) : *f->GetLocation()) {
     Assert(f != NULL); // b can be be NULL (just means no explicit base)
@@ -106,27 +89,6 @@ void FieldAccess::BuildScope(Scope *parent){
 
     if(base != NULL)
         base->BuildScope(scope);
-
-}
-
-void FieldAccess::Check() {
-    if (base != NULL)
-        base->Check();
-
-    Decl *d = NULL;
-
-    if (base == NULL) {
-        ClassDecl *c = GetClassDecl(scope);
-        if (c == NULL) {
-            if ((d = GetFieldDecl(field, scope)) == NULL) {
-                ReportError::IdentifierNotDeclared(field, LookingForVariable);
-                return;
-            }
-        } 
-    } 
-
-    if (dynamic_cast<VarDecl*>(d) == NULL)
-        ReportError::IdentifierNotDeclared(field, LookingForVariable);
 }
 
 Call::Call(yyltype loc, Expr *b, Identifier *f, List<Expr*> *a) : Expr(loc)  {
@@ -136,7 +98,7 @@ Call::Call(yyltype loc, Expr *b, Identifier *f, List<Expr*> *a) : Expr(loc)  {
     (field=f)->SetParent(this);
     (actuals=a)->SetParentAll(this);
 }
-
+ 
 void Call::BuildScope(Scope *parent){
     scope->SetParent(parent);
 
@@ -147,30 +109,21 @@ void Call::BuildScope(Scope *parent){
         actuals->Nth(i)->BuildScope(scope);
 }
 
-void Call::Check() {
-    if (base != NULL)
+void Call::Check(){
+    if(base != NULL)
         base->Check();
 
-    CheckActuals();
+    for(int i = 0; i < actuals->NumElements(); i++){
+        actuals->Nth(i)->Check();
+    }
 }
 
-void Call::CheckActuals(){
-    for (int i = 0, n = actuals->NumElements(); i < n; ++i)
-        actuals->Nth(i)->Check();
-}
 
 NewExpr::NewExpr(yyltype loc, NamedType *c) : Expr(loc) { 
   Assert(c != NULL);
   (cType=c)->SetParent(this);
 }
 
-void NewExpr::Check() {
-    Decl *d = Program::pScope->table->Lookup(cType->Name());
-    ClassDecl *c = dynamic_cast<ClassDecl*>(d);
-
-    if (c == NULL)
-        ReportError::IdentifierNotDeclared(cType->ID(), LookingForClass);
-}
 
 NewArrayExpr::NewArrayExpr(yyltype loc, Expr *sz, Type *et) : Expr(loc) {
     Assert(sz != NULL && et != NULL);
@@ -180,17 +133,8 @@ NewArrayExpr::NewArrayExpr(yyltype loc, Expr *sz, Type *et) : Expr(loc) {
 
 void NewArrayExpr::BuildScope(Scope *parent){
     scope->SetParent(parent);
+
     size->BuildScope(scope);
 }
 
-void NewArrayExpr::Check() {
-    size->Check();
 
-    if (elemType->IsPrimitive())
-        return;
-
-    Decl *d = Program::pScope->table->Lookup(elemType->Name());
-    if(dynamic_cast<ClassDecl*>(d) == NULL)
-        elemType->ReportNotDeclaredIdentifier(LookingForType);
-
-}

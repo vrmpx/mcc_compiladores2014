@@ -6,28 +6,26 @@
 #include "ast_type.h"
 #include "ast_decl.h"
 #include "ast_expr.h"
-#include "errors.h"
 
 
-int Scope::AddDecl(Decl *decl) {
-    Decl *lookup = table->Lookup(decl->Name());
+void Scope::AddDecl(Decl* d){
+    Decl* lookup = table->Lookup(d->Name());
 
-    if (lookup != NULL){
-        ReportError :: DeclConflict(decl, lookup);
-        return 1;
+    if(lookup != NULL){
+        ReportError::DeclConflict(d, lookup);
+        return;
     }
 
-    table->Enter(decl->Name(), decl);
-    return 0;
+    table->Enter(d->Name(), d);
+
 }
-
-Scope *Program::pScope = new Scope();
-
 
 Program::Program(List<Decl*> *d) {
     Assert(d != NULL);
     (decls=d)->SetParentAll(this);
 }
+
+Scope* Program::globalScope = new Scope();
 
 void Program::Check() {
     /* pp3: here is where the semantic analyzer is kicked off.
@@ -37,19 +35,19 @@ void Program::Check() {
      *      checking itself, which makes for a great use of inheritance
      *      and polymorphism in the node classes.
      */
-
      BuildScope();
+
      for(int i = 0; i < decls->NumElements(); i++)
         decls->Nth(i)->Check();
 }
 
-void Program::BuildScope(){
+void Program::BuildScope() {
 
-    for (int i = 0; i < decls->NumElements(); i++)
-        pScope->AddDecl(decls->Nth(i));
+     for(int i = 0; i < decls->NumElements(); i++)
+        globalScope->AddDecl(decls->Nth(i));
 
-    for (int i = 0; i < decls->NumElements(); i++)
-        decls->Nth(i)->BuildScope(pScope);
+    for(int i = 0; i < decls->NumElements(); i++)
+        decls->Nth(i)->BuildScope(globalScope);
 
 }
 
@@ -57,35 +55,33 @@ void Stmt::BuildScope(Scope *parent){
     scope->SetParent(parent);
 }
 
-
 StmtBlock::StmtBlock(List<VarDecl*> *d, List<Stmt*> *s) {
     Assert(d != NULL && s != NULL);
     (decls=d)->SetParentAll(this);
     (stmts=s)->SetParentAll(this);
 }
 
-void StmtBlock::BuildScope(Scope *parent){
-    scope->SetParent(parent);
-
-    for (int i = 0; i < decls->NumElements(); i ++)
-        scope->AddDecl(decls->Nth(i));
-
-    for (int i = 0; i < decls->NumElements(); i++)
-        decls->Nth(i)->BuildScope(scope);
-
-    for (int i = 0; i < stmts->NumElements(); i++)
-        stmts->Nth(i)->BuildScope(scope);
-
-}
-
 void StmtBlock::Check(){
-    for (int i = 0; i < decls->NumElements(); i++)
+
+
+    for(int i = 0; i < decls->NumElements(); i++)
         decls->Nth(i)->Check();
 
-    for (int i = 0; i < stmts->NumElements(); i++)
+    for(int i = 0; i < stmts->NumElements(); i++)
         stmts->Nth(i)->Check();
 }
 
+void StmtBlock::BuildScope(Scope *parent){
+    scope->SetParent(parent);
+    for(int i = 0; i < decls->NumElements(); i++)
+        scope->AddDecl(decls->Nth(i));
+
+    for(int i = 0; i < decls->NumElements(); i++)
+        decls->Nth(i)->BuildScope(scope);
+
+    for(int i = 0; i < stmts->NumElements(); i++)
+        stmts->Nth(i)->BuildScope(scope);
+}
 
 ConditionalStmt::ConditionalStmt(Expr *t, Stmt *b) { 
     Assert(t != NULL && b != NULL);
@@ -100,16 +96,10 @@ void ConditionalStmt::BuildScope(Scope *parent) {
     body->BuildScope(scope);
 }
 
-void ConditionalStmt::Check(){
+void ConditionalStmt::Check() {
+
     test->Check();
     body->Check();
-}
-
-
-void LoopStmt::BuildScope(Scope *parent){
-    scope->SetParent(parent);
-    test->BuildScope(scope);
-    body->BuildScope(scope);
 }
 
 ForStmt::ForStmt(Expr *i, Expr *t, Expr *s, Stmt *b): LoopStmt(t, b) { 
@@ -118,29 +108,29 @@ ForStmt::ForStmt(Expr *i, Expr *t, Expr *s, Stmt *b): LoopStmt(t, b) {
     (step=s)->SetParent(this);
 }
 
-
 IfStmt::IfStmt(Expr *t, Stmt *tb, Stmt *eb): ConditionalStmt(t, tb) { 
     Assert(t != NULL && tb != NULL); // else can be NULL
     elseBody = eb;
     if (elseBody) elseBody->SetParent(this);
 }
 
-void IfStmt::BuildScope(Scope *parent){
+void IfStmt::BuildScope(Scope *parent) {
     scope->SetParent(parent);
+
     test->BuildScope(scope);
     body->BuildScope(scope);
 
-    if (elseBody != NULL)
+    if(elseBody != NULL)
         elseBody->BuildScope(scope);
 }
 
 void IfStmt::Check() {
+
     test->Check();
     body->Check();
 
-    if (elseBody != NULL)
+    if(elseBody != NULL)
         elseBody->Check();
-
 }
 
 ReturnStmt::ReturnStmt(yyltype loc, Expr *e) : Stmt(loc) { 
@@ -152,30 +142,20 @@ void ReturnStmt::BuildScope(Scope *parent){
     scope->SetParent(parent);
     expr->BuildScope(scope);
 }
-  
-void ReturnStmt::Check() {
-    //expr->Check();
-}
 
 PrintStmt::PrintStmt(List<Expr*> *a) {    
     Assert(a != NULL);
     (args=a)->SetParentAll(this);
 }
 
-void PrintStmt::BuildScope(Scope *parent){
+void PrintStmt::BuildScope(Scope *parent) {
     scope->SetParent(parent);
 
-    for(int i=0; i<args->NumElements(); i++)
+    for(int i = 0; i < args->NumElements(); i++)
         args->Nth(i)->BuildScope(scope);
-    
 }
 
-void PrintStmt::Check() {
-    //PP4
-    // ???
-
-    // for(int i = 0; i < args->NumElements(); i++)
-    //     args->Nth(i)->Check();
-
+void PrintStmt::Check(){
+    for (int i = 0, n = args->NumElements(); i < n; ++i)
+        args->Nth(i)->Check();
 }
-

@@ -15,68 +15,68 @@
 
 #include "list.h"
 #include "ast.h"
+#include "errors.h"
 #include "hashtable.h"
-#include "ast_decl.h"
 
 class Decl;
 class VarDecl;
-class Expr;
-class FnDecl;
 class ClassDecl;
+class FnDecl;
+class Expr;
+
 
 class Scope 
 {
-  private:
-    Scope *parent;
-
-  public:
+  protected:
     Hashtable<Decl*> *table;
+    Scope *parent;
+    ClassDecl *classDecl;
     FnDecl *fnDecl;
-    ClassDecl *clDecl;
 
   public:
-    Scope(): table(new Hashtable<Decl*>), fnDecl(NULL) {}
-
-    void SetParent(Scope *p){ parent = p; }
+    Scope() : table(new Hashtable<Decl*>), parent(NULL), classDecl(NULL), fnDecl(NULL) {}
+    
     Scope* GetParent() { return parent; }
+    void SetParent(Scope *p) { parent = p; }
 
-    void SetFunctionDecl(FnDecl *f){ fnDecl = f; }
+    ClassDecl* GetClassDecl() { return classDecl; }
+    void SetClassDecl(ClassDecl* c){ classDecl = c; }
+
     FnDecl* GetFunctionDecl() { return fnDecl; }
+    void SetFunctionDecl(FnDecl *f) { fnDecl = f; }
 
-    void SetClassDecl(ClassDecl *c){ clDecl = c; }
-    ClassDecl* GetClassDecl() { return clDecl; }
 
-    int AddDecl(Decl *decl);
+    Hashtable<Decl*>* GetTable() { return table; }
+    void AddDecl(Decl* d);
 
 };
-  
+
+
 class Program : public Node
 {
-  public:
-    static Scope *pScope;
 
+  public:
+     static Scope* globalScope;
+     
   protected:
      List<Decl*> *decls;
      
   public:
      Program(List<Decl*> *declList);
      void Check();
-
-  private:
-    void BuildScope();
+     void BuildScope();
 };
 
 class Stmt : public Node
 {
   protected:
-      Scope *scope;
+    Scope *scope; 
 
   public:
      Stmt() : Node(), scope(new Scope)  {}
-     Stmt(yyltype loc) : Node(loc), scope(new Scope) {}
-
+     Stmt(yyltype loc) : Node(loc), scope(new Scope)  {}
      virtual void BuildScope(Scope *parent);
-     virtual void Check() = 0;
+     virtual void Check() {};
 };
 
 class StmtBlock : public Stmt 
@@ -87,7 +87,6 @@ class StmtBlock : public Stmt
     
   public:
     StmtBlock(List<VarDecl*> *variableDeclarations, List<Stmt*> *statements);
-
     void BuildScope(Scope *parent);
     void Check();
 };
@@ -101,9 +100,8 @@ class ConditionalStmt : public Stmt
   
   public:
     ConditionalStmt(Expr *testExpr, Stmt *body);
-
     virtual void BuildScope(Scope *parent);
-    virtual void Check();
+    void Check();
 };
 
 class LoopStmt : public ConditionalStmt 
@@ -111,8 +109,6 @@ class LoopStmt : public ConditionalStmt
   public:
     LoopStmt(Expr *testExpr, Stmt *body)
             : ConditionalStmt(testExpr, body) {}
-
-    virtual void BuildScope(Scope *parent);
 };
 
 class ForStmt : public LoopStmt 
@@ -137,8 +133,7 @@ class IfStmt : public ConditionalStmt
   
   public:
     IfStmt(Expr *test, Stmt *thenBody, Stmt *elseBody);
-
-    void BuildScope(Scope *parent);
+    void BuildScope(Scope *parent); 
     void Check();
 };
 
@@ -146,8 +141,6 @@ class BreakStmt : public Stmt
 {
   public:
     BreakStmt(yyltype loc) : Stmt(loc) {}
-
-   void Check() {}
 };
 
 class ReturnStmt : public Stmt  
@@ -157,9 +150,7 @@ class ReturnStmt : public Stmt
   
   public:
     ReturnStmt(yyltype loc, Expr *expr);
-
     void BuildScope(Scope *parent);
-    void Check();
 };
 
 class PrintStmt : public Stmt
@@ -169,7 +160,6 @@ class PrintStmt : public Stmt
     
   public:
     PrintStmt(List<Expr*> *arguments);
-
     void BuildScope(Scope *parent);
     void Check();
 };

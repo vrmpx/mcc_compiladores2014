@@ -1,0 +1,7 @@
+6a7,12
+> 
+> *** Error line 9.
+>    int a;
+>        ^
+> *** Declaration of 'a' here conflicts with declaration on line 2
+> 

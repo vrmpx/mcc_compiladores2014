@@ -1,0 +1,7 @@
+6a7,12
+> 
+> *** Error line 15.
+>   bool IsRipe(int weight, double weather) {
+>        ^^^^^^
+> *** Method 'IsRipe' must match inherited type signature
+> 

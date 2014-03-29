@@ -17,6 +17,7 @@
 #include "list.h"
 #include "ast_stmt.h"
 
+
 class Type;
 class NamedType;
 class Identifier;
@@ -28,17 +29,15 @@ class Decl : public Node
   protected:
     Identifier *id;
     Scope *scope;
-  
+
   public:
     Decl(Identifier *name);
     friend std::ostream& operator<<(std::ostream& out, Decl *d) { return out << d->id; }
-
-    const char* Name() { return id->Name(); }
     virtual void BuildScope(Scope *parent);
-    virtual void Check() = 0;
-    virtual bool IsEquivalentTo(Decl* other);
-    Scope* GetScope(){ return scope; }
-
+    virtual void Check() {}
+    const char* Name() { return id->Name(); }
+    virtual Scope* GetScope() { return scope; }
+    virtual bool IsEquivalentTo(Decl* d);
 };
 
 class VarDecl : public Decl 
@@ -48,8 +47,8 @@ class VarDecl : public Decl
     
   public:
     VarDecl(Identifier *name, Type *type);
-    bool IsEquivalentTo(Decl* other);
     void Check();
+    bool IsEquivalentTo(Decl* d);
 };
 
 class ClassDecl : public Decl 
@@ -62,16 +61,18 @@ class ClassDecl : public Decl
   public:
     ClassDecl(Identifier *name, NamedType *extends, 
               List<NamedType*> *implements, List<Decl*> *members);
-
     void BuildScope(Scope *parent);
     void Check();
+    NamedType* GetExtends(){ return extends; }
+    List<NamedType*>* GetImplements() { return implements; }
 
   private:
     void CheckExtends();
-    void CheckExtendedMembers(NamedType *extType);
-    void CheckOverride(Scope *other);
+    void CheckExtended(NamedType *ext);
     void CheckImplements();
-    void CheckImplementedMembers(NamedType* impType);
+    void CheckImplemented(NamedType *imp);
+    void CheckOverrides(Scope *other);
+
 };
 
 class InterfaceDecl : public Decl 
@@ -81,9 +82,7 @@ class InterfaceDecl : public Decl
     
   public:
     InterfaceDecl(Identifier *name, List<Decl*> *members);
-
     void BuildScope(Scope *parent);
-    void Check();
 };
 
 class FnDecl : public Decl 
@@ -96,11 +95,9 @@ class FnDecl : public Decl
   public:
     FnDecl(Identifier *name, Type *returnType, List<VarDecl*> *formals);
     void SetFunctionBody(Stmt *b);
-
-    Type* GetReturnType() {return returnType; }
     void BuildScope(Scope *parent);
     void Check();
-    bool IsEquivalentTo(Decl* other);
+    bool IsEquivalentTo(Decl* d);
 };
 
 #endif

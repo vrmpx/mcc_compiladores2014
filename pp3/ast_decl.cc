@@ -16,7 +16,7 @@ void Decl::BuildScope(Scope *parent){
     scope->SetParent(parent);
 }
 
-bool Decl::IsEquivalentTo(Decl* other) {
+bool Decl::IsEquivalentTo(Decl* d){
     return true;
 }
 
@@ -25,33 +25,33 @@ VarDecl::VarDecl(Identifier *n, Type *t) : Decl(n) {
     (type=t)->SetParent(this);
 }
 
-bool VarDecl::IsEquivalentTo(Decl* other){
-    VarDecl* varDecl = dynamic_cast<VarDecl*>(other);
-    if(varDecl == NULL)
-        return false;
-
-    return type->IsEquivalentTo(varDecl->type);
-}
-
 void VarDecl::Check() {
     if(type->IsPrimitive())
         return;
 
     Scope *s = scope;
-    Decl *d = NULL;
-
-
+    Decl* d;
     while(s != NULL){
-        if ((d = s->table->Lookup(type->Name())) != NULL){
-          if (dynamic_cast<ClassDecl*>(d) == NULL && dynamic_cast<InterfaceDecl*>(d) == NULL)
+        if ((d = s->GetTable()->Lookup(type->Name())) != NULL){
+            if(dynamic_cast<ClassDecl*>(d) == NULL && dynamic_cast<InterfaceDecl*>(d) == NULL)
                 type->ReportNotDeclaredIdentifier(LookingForType);
-
-            return;
+            return;   
         }
         s = s->GetParent();
     }
-
     type->ReportNotDeclaredIdentifier(LookingForType);
+}
+
+bool VarDecl::IsEquivalentTo(Decl* d){
+    VarDecl* other = dynamic_cast<VarDecl*>(d);
+
+    if(other == NULL)
+        return false;
+
+    if(!type->IsEquivalentTo(other->type))
+        return false;
+
+    return true;
 }
 
 ClassDecl::ClassDecl(Identifier *n, NamedType *ex, List<NamedType*> *imp, List<Decl*> *m) : Decl(n) {
@@ -62,6 +62,7 @@ ClassDecl::ClassDecl(Identifier *n, NamedType *ex, List<NamedType*> *imp, List<D
     (implements=imp)->SetParentAll(this);
     (members=m)->SetParentAll(this);
 }
+
 
 void ClassDecl::BuildScope(Scope *parent){
     scope->SetParent(parent);
@@ -74,84 +75,80 @@ void ClassDecl::BuildScope(Scope *parent){
         members->Nth(i)->BuildScope(scope);
 }
 
+
 void ClassDecl::Check() {
+    for(int i = 0; i < members->NumElements(); i++)
+        members->Nth(i)->Check();
 
     CheckExtends();
     CheckImplements();
 
-    for(int i = 0; i < members->NumElements(); i++)
-        members->Nth(i)->Check();
+    for (int i = 0; i < implements->NumElements(); i++)
+        CheckImplemented(implements->Nth(i));
 
-    CheckExtendedMembers(extends);
+    CheckExtended(extends);
 
-    for(int i = 0; i < implements->NumElements(); i++)
-        CheckImplementedMembers(implements->Nth(i));
 }
 
 void ClassDecl::CheckExtends() {
-    if (extends == NULL)
+    if(extends == NULL)
         return;
 
-    Decl *lookup = scope->GetParent()->table->Lookup(extends->Name());
-    if(dynamic_cast<ClassDecl *>(lookup) == NULL)
+    Decl* lookup = scope->GetParent()->GetTable()->Lookup(extends->Name());
+    if(dynamic_cast<ClassDecl*>(lookup) == NULL)
         extends->ReportNotDeclaredIdentifier(LookingForClass);
 }
 
-void ClassDecl::CheckExtendedMembers(NamedType *extType){
-    if(extType == NULL)
+void ClassDecl::CheckExtended(NamedType *ext){
+    if(ext == NULL)
         return;
 
-    Decl* lookup = scope->GetParent()->table->Lookup(extType->Name());
-    ClassDecl* extDecl = dynamic_cast<ClassDecl*>(lookup);
+    Decl* lookup = scope->GetParent()->GetTable()->Lookup(ext->Name());
+    ClassDecl* c = dynamic_cast<ClassDecl*>(lookup);
 
-    if(extDecl == NULL)
+    if(c == NULL)
         return;
 
-    CheckExtendedMembers(extDecl->extends);
-    CheckOverride(extDecl->scope);
+    CheckExtended(c->extends);
+    CheckOverrides(c->GetScope());
 }
 
-void ClassDecl::CheckOverride(Scope *other){
-    Iterator<Decl*> iter = scope->table->GetIterator();
+void ClassDecl::CheckImplements() {
+    Scope *s = scope->GetParent();
+
+    for (int i = 0, n = implements->NumElements(); i < n; ++i) {
+        NamedType *nth = implements->Nth(i);
+        Decl *lookup = s->GetTable()->Lookup(implements->Nth(i)->Name());
+
+        if (dynamic_cast<InterfaceDecl*>(lookup) == NULL)
+            nth->ReportNotDeclaredIdentifier(LookingForInterface);
+    }
+}
+
+void ClassDecl::CheckImplemented(NamedType *imp){
+    Decl* lookup = scope->GetParent()->GetTable()->Lookup(imp->Name());
+    InterfaceDecl* intDecl = dynamic_cast<InterfaceDecl*>(lookup);
+
+    if(intDecl == NULL)
+        return;
+
+    CheckOverrides(intDecl->GetScope());
+}
+
+void ClassDecl::CheckOverrides(Scope *other){
+    Iterator<Decl*> iter = scope->GetTable()->GetIterator();
     Decl *d;
 
     while((d = iter.GetNextValue()) != NULL){
-        Decl *lookup = other->table->Lookup(d->Name());
+        Decl* lookup = other->GetTable()->Lookup(d->Name());
 
-        if(lookup == NULL)
-            continue;
-
-        if(dynamic_cast<VarDecl*>(lookup) != NULL)
+        if(lookup != NULL && dynamic_cast<VarDecl*>(lookup) != NULL)
             ReportError::DeclConflict(d, lookup);
 
-        if(dynamic_cast<FnDecl*>(lookup) != NULL && !d->IsEquivalentTo(lookup))
-            ReportError::OverrideMismatch(d);
+        if(lookup != NULL && dynamic_cast<FnDecl*>(lookup) != NULL)
+            if(!d->IsEquivalentTo(lookup))
+                ReportError::OverrideMismatch(d);
     }
-}
-
-void ClassDecl::CheckImplements(){
-    if (implements == NULL)
-        return;
-
-    Decl *lookup;
-    for(int i = 0; i < implements->NumElements(); i++){
-        lookup = scope->GetParent()->table->Lookup(implements->Nth(i)->Name());
-        if(dynamic_cast<InterfaceDecl*>(lookup) == NULL)
-            implements->Nth(i)->ReportNotDeclaredIdentifier(LookingForInterface);
-    }
-}
-
-void ClassDecl::CheckImplementedMembers(NamedType *imp){
-    if(imp == NULL)
-        return;
-
-    Decl* lookup = scope->GetParent()->table->Lookup(imp->Name());
-    InterfaceDecl* impDecl = dynamic_cast<InterfaceDecl*>(lookup);
-
-    if(impDecl == NULL)
-        return;
-
-    CheckOverride(impDecl->GetScope());
 }
 
 InterfaceDecl::InterfaceDecl(Identifier *n, List<Decl*> *m) : Decl(n) {
@@ -159,7 +156,7 @@ InterfaceDecl::InterfaceDecl(Identifier *n, List<Decl*> *m) : Decl(n) {
     (members=m)->SetParentAll(this);
 }
 
-void InterfaceDecl::BuildScope(Scope *parent) {
+void InterfaceDecl::BuildScope(Scope* parent){
     scope->SetParent(parent);
 
     for(int i = 0; i < members->NumElements(); i++)
@@ -167,14 +164,9 @@ void InterfaceDecl::BuildScope(Scope *parent) {
 
     for(int i = 0; i < members->NumElements(); i++)
         members->Nth(i)->BuildScope(scope);
+
 }
 
-void InterfaceDecl::Check() {
-    for(int i = 0; i < members->NumElements(); i++)
-        members->Nth(i)->Check();
-}
-
-	
 FnDecl::FnDecl(Identifier *n, Type *r, List<VarDecl*> *d) : Decl(n) {
     Assert(n != NULL && r!= NULL && d != NULL);
     (returnType=r)->SetParent(this);
@@ -186,7 +178,26 @@ void FnDecl::SetFunctionBody(Stmt *b) {
     (body=b)->SetParent(this);
 }
 
-void FnDecl::BuildScope(Scope *parent){
+bool FnDecl::IsEquivalentTo(Decl* d){
+    FnDecl* other = dynamic_cast<FnDecl*>(d);
+
+    if(other == NULL)
+        return false;
+
+    if(!returnType->IsEquivalentTo(other->returnType))
+        return false;
+
+    if(formals->NumElements() != other->formals->NumElements())
+        return false;
+
+    for(int i = 0; i < formals->NumElements(); i++)
+        if(!formals->Nth(i)->IsEquivalentTo(other->formals->Nth(i)))
+            return false;
+
+    return true;
+}
+
+void FnDecl::BuildScope(Scope *parent) {
     scope->SetParent(parent);
     scope->SetFunctionDecl(this);
 
@@ -200,28 +211,10 @@ void FnDecl::BuildScope(Scope *parent){
         body->BuildScope(scope);
 }
 
-bool FnDecl::IsEquivalentTo(Decl* other){
-    FnDecl* fnDecl = dynamic_cast<FnDecl*>(other);
-    if(fnDecl == NULL)
-        return false;
-
-    if(!returnType->IsEquivalentTo(fnDecl->returnType))
-        return false;
-
-    if(formals->NumElements() != fnDecl->formals->NumElements())
-        return false;
-
-    for(int i = 0; i < formals->NumElements(); i++){
-        if(!formals->Nth(i)->IsEquivalentTo(fnDecl->formals->Nth(i)))
-            return false;
-    }
-    return true;
-}
-
-void FnDecl::Check(){
-    for (int i = 0; i < formals->NumElements(); i++)
+void FnDecl::Check() {
+   for (int i = 0; i < formals->NumElements(); i++)
         formals->Nth(i)->Check();
 
-    if(body != NULL)
+    if (body != NULL)
         body->Check();
 }

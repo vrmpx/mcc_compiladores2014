@@ -20,14 +20,11 @@
 class NamedType; // for new
 class Type; // for NewArray
 
-
 class Expr : public Stmt 
 {
   public:
     Expr(yyltype loc) : Stmt(loc) {}
     Expr() : Stmt() {}
-    ClassDecl* GetClassDecl(Scope *scope);
-    Decl* GetFieldDecl(Identifier *f, Scope *scope);
 };
 
 /* This node type is used for those places where an expression is optional.
@@ -36,7 +33,6 @@ class Expr : public Stmt
 class EmptyExpr : public Expr
 {
   public:
-    void Check() {}
 };
 
 class IntConstant : public Expr 
@@ -46,8 +42,6 @@ class IntConstant : public Expr
   
   public:
     IntConstant(yyltype loc, int val);
-
-    void Check() {}
 };
 
 class DoubleConstant : public Expr 
@@ -57,7 +51,6 @@ class DoubleConstant : public Expr
     
   public:
     DoubleConstant(yyltype loc, double val);
-    void Check() {}
 };
 
 class BoolConstant : public Expr 
@@ -67,7 +60,6 @@ class BoolConstant : public Expr
     
   public:
     BoolConstant(yyltype loc, bool val);
-    void Check() {}
 };
 
 class StringConstant : public Expr 
@@ -77,14 +69,12 @@ class StringConstant : public Expr
     
   public:
     StringConstant(yyltype loc, const char *val);
-    void Check() {}
 };
 
 class NullConstant: public Expr 
 {
   public: 
     NullConstant(yyltype loc) : Expr(loc) {}
-    void Check() {}
 };
 
 class Operator : public Node 
@@ -106,10 +96,8 @@ class CompoundExpr : public Expr
   public:
     CompoundExpr(Expr *lhs, Operator *op, Expr *rhs); // for binary
     CompoundExpr(Operator *op, Expr *rhs);             // for unary
-
-    void BuildScope(Scope* parent);
+    void BuildScope(Scope *parent);
     void Check();
-
 };
 
 class ArithmeticExpr : public CompoundExpr 
@@ -117,16 +105,12 @@ class ArithmeticExpr : public CompoundExpr
   public:
     ArithmeticExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     ArithmeticExpr(Operator *op, Expr *rhs) : CompoundExpr(op,rhs) {}
-
-    void Check() {}
-
 };
 
 class RelationalExpr : public CompoundExpr 
 {
   public:
     RelationalExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
-    void Check() {}
 };
 
 class EqualityExpr : public CompoundExpr 
@@ -134,7 +118,6 @@ class EqualityExpr : public CompoundExpr
   public:
     EqualityExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     const char *GetPrintNameForNode() { return "EqualityExpr"; }
-    void Check() {}
 };
 
 class LogicalExpr : public CompoundExpr 
@@ -143,7 +126,6 @@ class LogicalExpr : public CompoundExpr
     LogicalExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     LogicalExpr(Operator *op, Expr *rhs) : CompoundExpr(op,rhs) {}
     const char *GetPrintNameForNode() { return "LogicalExpr"; }
-    void Check() {}
 };
 
 class AssignExpr : public CompoundExpr 
@@ -151,7 +133,6 @@ class AssignExpr : public CompoundExpr
   public:
     AssignExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     const char *GetPrintNameForNode() { return "AssignExpr"; }
-    void Check() {}
 };
 
 class LValue : public Expr 
@@ -164,7 +145,6 @@ class This : public Expr
 {
   public:
     This(yyltype loc) : Expr(loc) {}
-    void Check() {}
 };
 
 class ArrayAccess : public LValue 
@@ -174,8 +154,7 @@ class ArrayAccess : public LValue
     
   public:
     ArrayAccess(yyltype loc, Expr *base, Expr *subscript);
-    void BuildScope(Scope* parent);
-    void Check() {}
+    void BuildScope(Scope *parent);
 };
 
 /* Note that field access is used both for qualified names
@@ -192,7 +171,6 @@ class FieldAccess : public LValue
   public:
     FieldAccess(Expr *base, Identifier *field); //ok to pass NULL base
     void BuildScope(Scope *parent);
-    void Check();
 };
 
 /* Like field access, call is used both for qualified base.field()
@@ -210,9 +188,6 @@ class Call : public Expr
     Call(yyltype loc, Expr *base, Identifier *field, List<Expr*> *args);
     void BuildScope(Scope *parent);
     void Check();
-
-  private:
-    void CheckActuals();
 };
 
 class NewExpr : public Expr
@@ -222,7 +197,6 @@ class NewExpr : public Expr
     
   public:
     NewExpr(yyltype loc, NamedType *clsType);
-    void Check();
 };
 
 class NewArrayExpr : public Expr
@@ -234,21 +208,18 @@ class NewArrayExpr : public Expr
   public:
     NewArrayExpr(yyltype loc, Expr *sizeExpr, Type *elemType);
     void BuildScope(Scope *parent);
-    void Check();
 };
 
 class ReadIntegerExpr : public Expr
 {
   public:
     ReadIntegerExpr(yyltype loc) : Expr(loc) {}
-    void Check() {}
 };
 
 class ReadLineExpr : public Expr
 {
   public:
     ReadLineExpr(yyltype loc) : Expr (loc) {}
-    void Check() {}
 };
 
     

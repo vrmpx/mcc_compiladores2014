@@ -1,0 +1,15 @@
+1c1,12
+< ./testAll.sh: line 17: ./dcc: No such file or directory
+---
+> 
+> *** Error line 7.
+>         int b;
+>             ^
+> *** Declaration of 'b' here conflicts with declaration on line 6
+> 
+> 
+> *** Error line 13.
+>            Unknown b;
+>            ^^^^^^^
+> *** No declaration found for type 'Unknown'
+> 
