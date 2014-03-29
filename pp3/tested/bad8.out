@@ -1,0 +1,6 @@
+
+*** Error line 4.
+   bool f(int[] a) {}
+        ^
+*** Declaration of 'f' here conflicts with declaration on line 3
+

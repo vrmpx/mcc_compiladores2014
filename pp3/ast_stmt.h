@@ -28,8 +28,8 @@ class Expr;
 class Scope 
 {
   protected:
-    Scope *parent;
     Hashtable<Decl*> *table;
+    Scope *parent;
     ClassDecl *classDecl;
     FnDecl *fnDecl;
 

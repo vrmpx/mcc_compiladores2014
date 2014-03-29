@@ -1,0 +1,6 @@
+
+*** Error line 12.
+  void root() {
+       ^^^^
+*** Declaration of 'root' here conflicts with declaration on line 10
+
