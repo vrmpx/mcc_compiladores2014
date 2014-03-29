@@ -1,21 +1,12 @@
-1c1,18
-< ./testAll.sh: line 17: ./dcc: No such file or directory
+10,11c10,11
+<                                          ^^^^
+< *** No declaration found for interface 'Gone'
 ---
-> 
-> *** Error line 1.
-> void Mystery(Unknown a) {}
->              ^^^^^^^
-> *** No declaration found for type 'Unknown'
-> 
-> 
-> *** Error line 3.
-> class Trouble extends Missing implements Gone
 >                       ^^^^^^^
 > *** No declaration found for class 'Missing'
-> 
-> 
-> *** Error line 3.
-> class Trouble extends Missing implements Gone
+16,17c16,17
+<                       ^^^^^^^
+< *** No declaration found for class 'Missing'
+---
 >                                          ^^^^
 > *** No declaration found for interface 'Gone'
-> 

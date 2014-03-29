@@ -86,6 +86,8 @@ void ClassDecl::Check() {
     for (int i = 0; i < implements->NumElements(); i++)
         CheckImplemented(implements->Nth(i));
 
+    CheckExtended(extends);
+
 }
 
 void ClassDecl::CheckExtends() {
@@ -97,14 +99,29 @@ void ClassDecl::CheckExtends() {
         extends->ReportNotDeclaredIdentifier(LookingForClass);
 }
 
-void ClassDecl::CheckImplements() {
-    if(implements == NULL)
+void ClassDecl::CheckExtended(NamedType *ext){
+    if(ext == NULL)
         return;
 
-    for(int i = 0; i < implements->NumElements(); i++){
-        Decl* lookup = scope->GetParent()->GetTable()->Lookup(implements->Nth(i)->Name());
-        if(dynamic_cast<InterfaceDecl*>(lookup) == NULL)
-            implements->Nth(i)->ReportNotDeclaredIdentifier(LookingForInterface);
+    Decl* lookup = scope->GetParent()->GetTable()->Lookup(ext->Name());
+    ClassDecl* c = dynamic_cast<ClassDecl*>(lookup);
+
+    if(c == NULL)
+        return;
+
+    CheckExtended(c->extends);
+    CheckOverrides(c->GetScope());
+}
+
+void ClassDecl::CheckImplements() {
+    Scope *s = scope->GetParent();
+
+    for (int i = 0, n = implements->NumElements(); i < n; ++i) {
+        NamedType *nth = implements->Nth(i);
+        Decl *lookup = s->GetTable()->Lookup(implements->Nth(i)->Name());
+
+        if (dynamic_cast<InterfaceDecl*>(lookup) == NULL)
+            nth->ReportNotDeclaredIdentifier(LookingForInterface);
     }
 }
 

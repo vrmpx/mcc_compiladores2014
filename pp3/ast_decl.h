@@ -68,6 +68,7 @@ class ClassDecl : public Decl
 
   private:
     void CheckExtends();
+    void CheckExtended(NamedType *ext);
     void CheckImplements();
     void CheckImplemented(NamedType *imp);
     void CheckOverrides(Scope *other);
