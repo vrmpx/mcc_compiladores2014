@@ -121,7 +121,8 @@ class RelationalExpr : public CompoundExpr
   public:
     RelationalExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     bool IsBool() { return true; }
-    // Type* GetType();
+    Type* GetType();
+    void Check();
 };
 
 class EqualityExpr : public CompoundExpr 
@@ -140,8 +141,8 @@ class LogicalExpr : public CompoundExpr
     LogicalExpr(Operator *op, Expr *rhs) : CompoundExpr(op,rhs) {}
     const char *GetPrintNameForNode() { return "LogicalExpr"; }
     bool IsBool() { return true; }
-    // Type* GetType();
-
+    Type* GetType();
+    void Check();
 };
 
 class AssignExpr : public CompoundExpr 
@@ -149,7 +150,7 @@ class AssignExpr : public CompoundExpr
   public:
     AssignExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     const char *GetPrintNameForNode() { return "AssignExpr"; }
-    // Type* GetType();
+    void Check();
 };
 
 class LValue : public Expr 
