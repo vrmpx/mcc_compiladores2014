@@ -62,6 +62,7 @@ class LoopStmt : public ConditionalStmt
   public:
     LoopStmt(Expr *testExpr, Stmt *body)
             : ConditionalStmt(testExpr, body) {}
+    void Check();
 };
 
 class ForStmt : public LoopStmt 
@@ -93,6 +94,7 @@ class BreakStmt : public Stmt
 {
   public:
     BreakStmt(yyltype loc) : Stmt(loc) {}
+    void Check();
 };
 
 class ReturnStmt : public Stmt  
@@ -102,6 +104,7 @@ class ReturnStmt : public Stmt
   
   public:
     ReturnStmt(yyltype loc, Expr *expr);
+    void Check();
 };
 
 class PrintStmt : public Stmt

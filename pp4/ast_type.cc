@@ -28,9 +28,6 @@ Type::Type(const char *n) {
     Assert(n);
     typeName = strdup(n);
 }
-
-
-
 	
 NamedType::NamedType(Identifier *i) : Type(*i->GetLocation()) {
     Assert(i != NULL);

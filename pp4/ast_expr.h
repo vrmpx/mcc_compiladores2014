@@ -23,6 +23,8 @@ class Expr : public Stmt
   public:
     Expr(yyltype loc) : Stmt(loc) {}
     Expr() : Stmt() {}
+    virtual bool IsBool() { return false; }
+    virtual Type* GetType();
 };
 
 /* This node type is used for those places where an expression is optional.
@@ -31,6 +33,7 @@ class Expr : public Stmt
 class EmptyExpr : public Expr
 {
   public:
+    Type* GetType();
 };
 
 class IntConstant : public Expr 
@@ -40,6 +43,7 @@ class IntConstant : public Expr
   
   public:
     IntConstant(yyltype loc, int val);
+    Type* GetType();
 };
 
 class DoubleConstant : public Expr 
@@ -49,6 +53,7 @@ class DoubleConstant : public Expr
     
   public:
     DoubleConstant(yyltype loc, double val);
+    Type* GetType();
 };
 
 class BoolConstant : public Expr 
@@ -58,6 +63,8 @@ class BoolConstant : public Expr
     
   public:
     BoolConstant(yyltype loc, bool val);
+    bool IsBool() { return true; }
+    Type* GetType();
 };
 
 class StringConstant : public Expr 
@@ -67,12 +74,14 @@ class StringConstant : public Expr
     
   public:
     StringConstant(yyltype loc, const char *val);
+    Type* GetType();
 };
 
 class NullConstant: public Expr 
 {
   public: 
     NullConstant(yyltype loc) : Expr(loc) {}
+    Type* GetType();
 };
 
 class Operator : public Node 
@@ -95,6 +104,7 @@ class CompoundExpr : public Expr
   public:
     CompoundExpr(Expr *lhs, Operator *op, Expr *rhs); // for binary
     CompoundExpr(Operator *op, Expr *rhs);             // for unary
+    void Check();
 };
 
 class ArithmeticExpr : public CompoundExpr 
@@ -102,12 +112,15 @@ class ArithmeticExpr : public CompoundExpr
   public:
     ArithmeticExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     ArithmeticExpr(Operator *op, Expr *rhs) : CompoundExpr(op,rhs) {}
+    Type* GetType();
 };
 
 class RelationalExpr : public CompoundExpr 
 {
   public:
     RelationalExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
+    bool IsBool() { return true; }
+    // Type* GetType();
 };
 
 class EqualityExpr : public CompoundExpr 
@@ -115,6 +128,8 @@ class EqualityExpr : public CompoundExpr
   public:
     EqualityExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     const char *GetPrintNameForNode() { return "EqualityExpr"; }
+    bool IsBool() { return true; }
+    // Type* GetType();
 };
 
 class LogicalExpr : public CompoundExpr 
@@ -123,6 +138,9 @@ class LogicalExpr : public CompoundExpr
     LogicalExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     LogicalExpr(Operator *op, Expr *rhs) : CompoundExpr(op,rhs) {}
     const char *GetPrintNameForNode() { return "LogicalExpr"; }
+    bool IsBool() { return true; }
+    // Type* GetType();
+
 };
 
 class AssignExpr : public CompoundExpr 
@@ -130,6 +148,7 @@ class AssignExpr : public CompoundExpr
   public:
     AssignExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     const char *GetPrintNameForNode() { return "AssignExpr"; }
+    // Type* GetType();
 };
 
 class LValue : public Expr 
@@ -142,6 +161,7 @@ class This : public Expr
 {
   public:
     This(yyltype loc) : Expr(loc) {}
+    // Type* GetType();
 };
 
 class ArrayAccess : public LValue 
@@ -161,7 +181,7 @@ class ArrayAccess : public LValue
 class FieldAccess : public LValue 
 {
   protected:
-    Expr *base;	// will be NULL if no explicit base
+    Expr *base; // will be NULL if no explicit base
     Identifier *field;
     
   public:
@@ -175,7 +195,7 @@ class FieldAccess : public LValue
 class Call : public Expr 
 {
   protected:
-    Expr *base;	// will be NULL if no explicit base
+    Expr *base; // will be NULL if no explicit base
     Identifier *field;
     List<Expr*> *actuals;
     

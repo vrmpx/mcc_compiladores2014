@@ -94,6 +94,7 @@ class FnDecl : public Decl
     bool IsMethodDecl();
     bool ConflictsWithPrevious(Decl *prev);
     bool MatchesPrototype(FnDecl *other);
+    Type* GetType() { return returnType; }
 };
 
 #endif

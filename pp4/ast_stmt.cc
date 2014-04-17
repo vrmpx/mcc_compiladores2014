@@ -41,6 +41,16 @@ ConditionalStmt::ConditionalStmt(Expr *t, Stmt *b) {
 
 void ConditionalStmt::Check() {
     body->Check();
+
+   if(!test->IsBool()){
+        ReportError::TestNotBoolean(test);
+    }
+
+}
+
+void LoopStmt::Check() {
+    this->GetParent()->GetScope()->SetLoopStmt(this);
+    ConditionalStmt::Check();
 }
 
 ForStmt::ForStmt(Expr *i, Expr *t, Expr *s, Stmt *b): LoopStmt(t, b) { 
@@ -54,17 +64,48 @@ IfStmt::IfStmt(Expr *t, Stmt *tb, Stmt *eb): ConditionalStmt(t, tb) {
     elseBody = eb;
     if (elseBody) elseBody->SetParent(this);
 }
+
 void IfStmt::Check() {
     ConditionalStmt::Check();
     if (elseBody) elseBody->Check();
 }
 
+void BreakStmt::Check() {
+    Node *parent = this->GetParent();
+    Scope *s;
+    while(parent != NULL){
+        s = parent->GetScope();
+        if(s && s->GetLoopStmt() != NULL)
+            return;
+        parent = parent->GetParent();
+    }
+    ReportError::BreakOutsideLoop(this);
+}
 
 ReturnStmt::ReturnStmt(yyltype loc, Expr *e) : Stmt(loc) { 
     Assert(e != NULL);
     (expr=e)->SetParent(this);
 }
-  
+
+void ReturnStmt::Check() {
+    Node *parent = this->GetParent();
+    FnDecl *fn = NULL;
+    while (parent != NULL){
+
+        if((fn = dynamic_cast<FnDecl*>(parent)) != NULL)
+            break;
+
+        parent = parent->GetParent();
+    }
+
+    Type *expected = fn->GetType();
+    Type *actual = expr->GetType();
+    if (!expected->IsEquivalentTo(actual)){
+        ReportError::ReturnMismatch(this, actual, expected);
+        return;
+    }
+}
+
 PrintStmt::PrintStmt(List<Expr*> *a) {    
     Assert(a != NULL);
     (args=a)->SetParentAll(this);

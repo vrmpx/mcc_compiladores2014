@@ -12,10 +12,12 @@
 class Decl;
 class Identifier;
 class ClassDecl; 
+class LoopStmt;
 
 class Scope { 
   protected:
     Hashtable<Decl*> *table;
+    LoopStmt *loopStmt;
 
   public:
     Scope();
@@ -23,6 +25,10 @@ class Scope {
     Decl *Lookup(Identifier *id);
     bool Declare(Decl *dec);
     void CopyFromScope(Scope *other, ClassDecl *cd);
+    Hashtable<Decl*>* GetTable() { return table; }
+
+    LoopStmt* GetLoopStmt() { return loopStmt; }
+    void SetLoopStmt(LoopStmt* l) { loopStmt = l; }
 };
 
 

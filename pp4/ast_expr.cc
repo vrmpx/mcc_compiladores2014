@@ -9,22 +9,50 @@
 
 #include "errors.h"
 
+Type* Expr::GetType() {
+    return Type::nullType;
+}
+
+
+Type* EmptyExpr::GetType() {
+    return Type::errorType;
+}
 
 IntConstant::IntConstant(yyltype loc, int val) : Expr(loc) {
     value = val;
+}
+
+Type* IntConstant::GetType() {
+    return Type::intType;
 }
 
 DoubleConstant::DoubleConstant(yyltype loc, double val) : Expr(loc) {
     value = val;
 }
 
+Type* DoubleConstant::GetType() {
+    return Type::doubleType;
+}
+
 BoolConstant::BoolConstant(yyltype loc, bool val) : Expr(loc) {
     value = val;
+}
+
+Type* BoolConstant::GetType() {
+    return Type::boolType;
 }
 
 StringConstant::StringConstant(yyltype loc, const char *val) : Expr(loc) {
     Assert(val != NULL);
     value = strdup(val);
+}
+
+Type* StringConstant::GetType() {
+    return Type::stringType;
+}
+
+Type* NullConstant::GetType() {
+    return Type::nullType;
 }
 
 Operator::Operator(yyltype loc, const char *tok) : Node(loc) {
@@ -46,8 +74,39 @@ CompoundExpr::CompoundExpr(Operator *o, Expr *r)
     (op=o)->SetParent(this);
     (right=r)->SetParent(this);
 }
-   
-  
+
+void CompoundExpr::Check() {
+
+    right->Check();
+    if (left != NULL)
+        left->Check();
+
+
+    Type* rtype = right->GetType();
+
+    if(left == NULL){
+        if(!rtype->IsEquivalentTo(Type::intType) && !rtype->IsEquivalentTo(Type::doubleType))
+            ReportError::IncompatibleOperand(op, rtype);
+    }else{
+        Type* ltype = left->GetType();
+        if(!ltype->IsEquivalentTo(rtype))
+            ReportError::IncompatibleOperands(op, ltype, rtype);
+    }
+}
+
+Type* ArithmeticExpr::GetType() {
+    Type* rtype = right->GetType();
+    if(left == NULL){
+        return rtype;
+    }else{
+        Type* ltype = left->GetType();
+        if(rtype->IsEquivalentTo(ltype))
+            return rtype;
+        else
+            return Type::errorType;
+    }
+}
+
 ArrayAccess::ArrayAccess(yyltype loc, Expr *b, Expr *s) : LValue(loc) {
     (base=b)->SetParent(this); 
     (subscript=s)->SetParent(this);

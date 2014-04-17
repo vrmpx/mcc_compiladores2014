@@ -51,6 +51,8 @@ class Node
     typedef enum { kShallow, kDeep } lookup;
     virtual Decl *FindDecl(Identifier *id, lookup l = kDeep);
     virtual Scope *PrepareScope() { return NULL; }
+
+    Scope* GetScope() { return nodeScope; }
 };
    
 
