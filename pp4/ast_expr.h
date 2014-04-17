@@ -23,7 +23,7 @@ class Expr : public Stmt
   public:
     Expr(yyltype loc) : Stmt(loc) {}
     Expr() : Stmt() {}
-    virtual bool IsBool() { return false; }
+    bool IsBool();
     virtual Type* GetType();
 };
 
@@ -63,7 +63,6 @@ class BoolConstant : public Expr
     
   public:
     BoolConstant(yyltype loc, bool val);
-    bool IsBool() { return true; }
     Type* GetType();
 };
 
@@ -130,8 +129,7 @@ class EqualityExpr : public CompoundExpr
   public:
     EqualityExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     const char *GetPrintNameForNode() { return "EqualityExpr"; }
-    bool IsBool() { return true; }
-    // Type* GetType();
+    Type* GetType();
 };
 
 class LogicalExpr : public CompoundExpr 
@@ -140,7 +138,6 @@ class LogicalExpr : public CompoundExpr
     LogicalExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     LogicalExpr(Operator *op, Expr *rhs) : CompoundExpr(op,rhs) {}
     const char *GetPrintNameForNode() { return "LogicalExpr"; }
-    bool IsBool() { return true; }
     Type* GetType();
     void Check();
 };
@@ -173,6 +170,8 @@ class ArrayAccess : public LValue
     
   public:
     ArrayAccess(yyltype loc, Expr *base, Expr *subscript);
+    void Check();
+    Type* GetType();
 };
 
 /* Note that field access is used both for qualified names
@@ -204,6 +203,8 @@ class Call : public Expr
     
   public:
     Call(yyltype loc, Expr *base, Identifier *field, List<Expr*> *args);
+    Type* GetType();
+    void Check();
 };
 
 class NewExpr : public Expr
@@ -223,6 +224,8 @@ class NewArrayExpr : public Expr
     
   public:
     NewArrayExpr(yyltype loc, Expr *sizeExpr, Type *elemType);
+    Type* GetType();
+    void Check();
 };
 
 class ReadIntegerExpr : public Expr

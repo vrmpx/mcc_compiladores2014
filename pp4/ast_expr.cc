@@ -9,6 +9,10 @@
 
 #include "errors.h"
 
+bool Expr::IsBool() {
+    return GetType()->IsEquivalentTo(Type::boolType);
+}
+
 Type* Expr::GetType() {
     return Type::nullType;
 }
@@ -159,6 +163,10 @@ Type* RelationalExpr::GetType() {
     return Type::boolType;
 }
 
+Type* EqualityExpr::GetType() {
+    return Type::boolType;
+}
+
 void LogicalExpr::Check() {
     right->Check();
     if(left!=NULL)
@@ -210,7 +218,26 @@ ArrayAccess::ArrayAccess(yyltype loc, Expr *b, Expr *s) : LValue(loc) {
     (base=b)->SetParent(this); 
     (subscript=s)->SetParent(this);
 }
-     
+
+void ArrayAccess::Check() {
+    base->Check();
+    subscript->Check();
+
+    if(!subscript->GetType()->IsEquivalentTo(Type::intType))
+        ReportError::SubscriptNotInteger(subscript);
+
+    //Checamos que base sea array
+    if(dynamic_cast<ArrayType*>(base->GetType()) == NULL)
+        ReportError::BracketsOnNonArray(base);
+}
+
+Type* ArrayAccess::GetType() {
+   ArrayType* arrType = dynamic_cast<ArrayType*>(base->GetType()); 
+   if(arrType)
+        return arrType->GetElemType();
+   return base->GetType();
+}
+
 FieldAccess::FieldAccess(Expr *b, Identifier *f) 
   : LValue(b? Join(b->GetLocation(), f->GetLocation()) : *f->GetLocation()) {
     Assert(f != NULL); // b can be be NULL (just means no explicit base)
@@ -235,6 +262,23 @@ Call::Call(yyltype loc, Expr *b, Identifier *f, List<Expr*> *a) : Expr(loc)  {
     (field=f)->SetParent(this);
     (actuals=a)->SetParentAll(this);
 }
+
+void Call::Check() {
+    if(base!= NULL)
+        base->Check();
+
+    field->Check();
+    actuals->CheckAll();
+}
+
+Type* Call::GetType() {
+    Decl* d = FindDecl(field);
+    FnDecl* fn = dynamic_cast<FnDecl*>(d);
+    if(fn != NULL) {
+        fn->GetType();
+    }
+    return Type::errorType;
+}
  
 
 NewExpr::NewExpr(yyltype loc, NamedType *c) : Expr(loc) { 
@@ -249,4 +293,15 @@ NewArrayExpr::NewArrayExpr(yyltype loc, Expr *sz, Type *et) : Expr(loc) {
     (elemType=et)->SetParent(this);
 }
 
+void NewArrayExpr::Check() {
+    size->Check();
+    elemType->Check();
+
+    if(!size->GetType()->IsEquivalentTo(Type::intType))
+        ReportError::NewArraySizeNotInteger(size);
+}
+
+Type* NewArrayExpr::GetType() {
+    return new ArrayType(elemType);
+}
        

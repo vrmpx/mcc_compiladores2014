@@ -58,10 +58,12 @@ class ArrayType : public Type
 
   public:
     ArrayType(yyltype loc, Type *elemType);
+    ArrayType(Type *elemType);
     
     void PrintToStream(std::ostream& out) { out << elemType << "[]"; }
     void Check();
     bool IsEquivalentTo(Type *other);
+    Type* GetElemType() { return elemType; }
 };
 
  

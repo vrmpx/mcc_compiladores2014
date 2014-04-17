@@ -69,6 +69,11 @@ ArrayType::ArrayType(yyltype loc, Type *et) : Type(loc) {
     (elemType=et)->SetParent(this);
 }
 
+ArrayType::ArrayType(Type *et) : Type("") {
+    Assert(et != NULL);
+    (elemType=et)->SetParent(this);
+}
+
 void ArrayType::Check() {
     elemType->Check();
 }
