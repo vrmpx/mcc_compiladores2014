@@ -65,6 +65,7 @@ class ClassDecl : public Decl
     void Check();
     bool IsClassDecl() { return true; }
     Scope *PrepareScope();
+    Type* GetType() { return cType; }
 };
 
 class InterfaceDecl : public Decl 

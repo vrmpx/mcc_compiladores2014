@@ -18,6 +18,7 @@ class Scope {
   protected:
     Hashtable<Decl*> *table;
     LoopStmt *loopStmt;
+    ClassDecl *classDecl;
 
   public:
     Scope();
@@ -29,6 +30,10 @@ class Scope {
 
     LoopStmt* GetLoopStmt() { return loopStmt; }
     void SetLoopStmt(LoopStmt* l) { loopStmt = l; }
+
+    ClassDecl* GetClassDecl() { return classDecl; }
+    void SetClassDecl(ClassDecl* c) { classDecl = c; }
+
 };
 
 

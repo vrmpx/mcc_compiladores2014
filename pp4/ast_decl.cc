@@ -40,6 +40,8 @@ ClassDecl::ClassDecl(Identifier *n, NamedType *ex, List<NamedType*> *imp, List<D
 
 void ClassDecl::Check() {
 
+    this->GetParent()->GetScope()->SetClassDecl(this);
+
     if (extends && !extends->IsClass()) {
         ReportError::IdentifierNotDeclared(extends->GetId(), LookingForClass);
         extends = NULL;

@@ -209,10 +209,32 @@ void AssignExpr::Check() {
     Type *rtype = right->GetType();
     Type *ltype = left->GetType();
 
-    if(!rtype->IsEquivalentTo(Type::errorType) && !rtype->IsEquivalentTo(ltype))
+    if(ltype->IsEquivalentTo(Type::errorType) || rtype->IsEquivalentTo(Type::errorType))
+        return;
+
+    if(!rtype->IsEquivalentTo(ltype))
         ReportError::IncompatibleOperands(op, ltype, rtype);
 }
 
+void This::Check() {
+    Scope* s = GetParent()->GetScope();
+    if (s && s->GetClassDecl())
+        return;
+    ReportError::ThisOutsideClassScope(this);
+}
+
+Type* This::GetType() {
+    Scope *s = GetParent()->GetScope();
+    if (s != NULL){
+        ClassDecl *classDecl = s->GetClassDecl();
+        if(classDecl != NULL){
+            return classDecl->GetType();
+        }else{
+            return Type::errorType;
+        }
+    }
+    return Type::errorType;
+}
 
 ArrayAccess::ArrayAccess(yyltype loc, Expr *b, Expr *s) : LValue(loc) {
     (base=b)->SetParent(this); 
@@ -244,6 +266,28 @@ FieldAccess::FieldAccess(Expr *b, Identifier *f)
     base = b; 
     if (base) base->SetParent(this); 
     (field=f)->SetParent(this);
+}
+
+void FieldAccess::Check() {
+    if(base != NULL){
+
+        Type* btype = base->GetType();
+        NamedType* ntype = dynamic_cast<NamedType*>(btype);
+        if(ntype != NULL){
+            //Class.field
+            //Revisamos que nos encontramos en class scope
+            Scope *s = GetParent()->GetScope();
+            if(s == NULL || s->GetClassDecl() == NULL){
+                ReportError::InaccessibleField(field, btype);
+                return;
+            }
+        }else{
+            //type.field
+            ReportError::FieldNotFoundInBase(field, btype);
+            return;
+        }
+       
+    }
 }
 
 Type* FieldAccess::GetType() {

@@ -160,7 +160,8 @@ class This : public Expr
 {
   public:
     This(yyltype loc) : Expr(loc) {}
-    // Type* GetType();
+    Type* GetType();
+    void Check();
 };
 
 class ArrayAccess : public LValue 
@@ -188,6 +189,7 @@ class FieldAccess : public LValue
   public:
     FieldAccess(Expr *base, Identifier *field); //ok to pass NULL base
     Type* GetType();
+    void Check();
 };
 
 /* Like field access, call is used both for qualified base.field()
