@@ -76,20 +76,26 @@ CompoundExpr::CompoundExpr(Operator *o, Expr *r)
 }
 
 void CompoundExpr::Check() {
-
     right->Check();
-    if (left != NULL)
+    if(left!=NULL)
         left->Check();
+}
 
-
+void ArithmeticExpr::Check() {
     Type* rtype = right->GetType();
-
     if(left == NULL){
         if(!rtype->IsEquivalentTo(Type::intType) && !rtype->IsEquivalentTo(Type::doubleType))
             ReportError::IncompatibleOperand(op, rtype);
     }else{
         Type* ltype = left->GetType();
-        if(!ltype->IsEquivalentTo(rtype))
+        
+        if(rtype->IsEquivalentTo(Type::intType) && !ltype->IsEquivalentTo(Type::intType))
+            ReportError::IncompatibleOperands(op, ltype, rtype);
+        else if (rtype->IsEquivalentTo(Type::doubleType) && !ltype->IsEquivalentTo(Type::doubleType))
+            ReportError::IncompatibleOperands(op, ltype, rtype);
+        else if(!rtype->IsEquivalentTo(Type::intType) && ltype->IsEquivalentTo(Type::intType))
+            ReportError::IncompatibleOperands(op, ltype, rtype);
+        else if(!rtype->IsEquivalentTo(Type::doubleType) && ltype->IsEquivalentTo(Type::doubleType))
             ReportError::IncompatibleOperands(op, ltype, rtype);
     }
 }
@@ -107,6 +113,7 @@ Type* ArithmeticExpr::GetType() {
     }
 }
 
+
 ArrayAccess::ArrayAccess(yyltype loc, Expr *b, Expr *s) : LValue(loc) {
     (base=b)->SetParent(this); 
     (subscript=s)->SetParent(this);
@@ -120,6 +127,14 @@ FieldAccess::FieldAccess(Expr *b, Identifier *f)
     (field=f)->SetParent(this);
 }
 
+Type* FieldAccess::GetType() {
+    Decl *d = this->FindDecl(field);
+    VarDecl *varDecl = dynamic_cast<VarDecl*>(d);
+    if(varDecl!=NULL)
+        return varDecl->GetDeclaredType();
+    else
+        return Type::errorType;
+}
 
 Call::Call(yyltype loc, Expr *b, Identifier *f, List<Expr*> *a) : Expr(loc)  {
     Assert(f != NULL && a != NULL); // b can be be NULL (just means no explicit base)

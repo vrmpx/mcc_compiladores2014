@@ -112,6 +112,7 @@ class ArithmeticExpr : public CompoundExpr
   public:
     ArithmeticExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     ArithmeticExpr(Operator *op, Expr *rhs) : CompoundExpr(op,rhs) {}
+    void Check();
     Type* GetType();
 };
 
@@ -186,6 +187,7 @@ class FieldAccess : public LValue
     
   public:
     FieldAccess(Expr *base, Identifier *field); //ok to pass NULL base
+    Type* GetType();
 };
 
 /* Like field access, call is used both for qualified base.field()
