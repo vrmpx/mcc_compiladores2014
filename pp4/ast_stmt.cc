@@ -42,7 +42,7 @@ ConditionalStmt::ConditionalStmt(Expr *t, Stmt *b) {
 void ConditionalStmt::Check() {
     body->Check();
 
-   if(!test->IsBool()){
+   if(!test->GetType()->IsEquivalentTo(Type::errorType) && !test->IsBool()){
         ReportError::TestNotBoolean(test);
     }
 

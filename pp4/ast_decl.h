@@ -48,6 +48,7 @@ class VarDecl : public Decl
     VarDecl(Identifier *name, Type *type);
     void Check();
     Type *GetDeclaredType() { return type; }
+    Type* GetType() { return type; }
 };
 
 class ClassDecl : public Decl 
@@ -96,6 +97,8 @@ class FnDecl : public Decl
     bool ConflictsWithPrevious(Decl *prev);
     bool MatchesPrototype(FnDecl *other);
     Type* GetType() { return returnType; }
+    int GetActualsLength() { return formals->NumElements(); }
+    List<VarDecl*>* GetFormals() { return formals; }
 };
 
 #endif

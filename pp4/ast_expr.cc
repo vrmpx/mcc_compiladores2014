@@ -91,7 +91,7 @@ void ArithmeticExpr::Check() {
     right->Check();
 
     Type* rtype = right->GetType();
-
+    
     if(rtype->IsEquivalentTo(Type::errorType))
         return;
 
@@ -135,6 +135,8 @@ void RelationalExpr::Check() {
     Type* rtype = right->GetType();
     Type* ltype = left->GetType();
 
+    if(ltype->IsEquivalentTo(Type::errorType) || rtype->IsEquivalentTo(Type::errorType))
+            return;
 
     if(rtype->IsEquivalentTo(Type::intType) && !ltype->IsEquivalentTo(Type::intType))
         ReportError::IncompatibleOperands(op, ltype, rtype);
@@ -144,6 +146,7 @@ void RelationalExpr::Check() {
         ReportError::IncompatibleOperands(op, ltype, rtype);
     else if(!rtype->IsEquivalentTo(Type::doubleType) && ltype->IsEquivalentTo(Type::doubleType))
         ReportError::IncompatibleOperands(op, ltype, rtype);
+
 }
 
 Type* RelationalExpr::GetType() {
@@ -172,17 +175,8 @@ void LogicalExpr::Check() {
         left->Check();
     right->Check();
 
-    Type* rtype = right->GetType();
-    if(left == NULL){
-        if(!rtype->IsEquivalentTo(Type::boolType))
-            ReportError::IncompatibleOperand(op, rtype);
-    }else{
-        Type* ltype = left->GetType();
-        if(rtype->IsEquivalentTo(Type::boolType) && !ltype->IsEquivalentTo(Type::boolType))
-            ReportError::IncompatibleOperands(op, ltype, rtype);
-        else if(!rtype->IsEquivalentTo(Type::boolType) && ltype->IsEquivalentTo(Type::boolType))
-            ReportError::IncompatibleOperands(op, ltype, rtype);
-    }
+    if(!right->IsBool())
+        ReportError::IncompatibleOperand(op, right->GetType());
 }
 
 Type* LogicalExpr::GetType() {
@@ -320,26 +314,41 @@ void Call::Check() {
     field->Check();
     actuals->CheckAll();
 
-    if(base != NULL){
 
-        Decl* d = this->FindDecl(field);
+    Decl* d = this->FindDecl(field);
+    if(base != NULL){
         if ( d == NULL )
             ReportError::FieldNotFoundInBase(field, base->GetType());
-  
     } else {
-
-        Decl* d = this->FindDecl(field);
         if(d == NULL)
             ReportError::IdentifierNotDeclared(field, LookingForFunction);
-
     }
+
+    FnDecl* f = dynamic_cast<FnDecl*>(d);
+    if(f != NULL){
+        int numGiven = actuals->NumElements();
+        int numExpected = f->GetActualsLength();
+
+        if (numGiven != numExpected)
+            ReportError::NumArgsMismatch(field, numExpected, numGiven);
+
+        List<VarDecl*> *formals = f->GetFormals();
+        Type *given, *expected;
+        for(int i = 0; i < numGiven; i++){
+            given = actuals->Nth(i)->GetType();
+            expected = formals->Nth(i)->GetType();
+            if(!given->IsEquivalentTo(expected))
+                ReportError::ArgMismatch(actuals->Nth(i), i + 1, given, expected);
+        }
+    }
+
 }
 
 Type* Call::GetType() {
     Decl* d = FindDecl(field);
     FnDecl* fn = dynamic_cast<FnDecl*>(d);
     if(fn != NULL) {
-        fn->GetType();
+        return fn->GetType();
     }
     return Type::errorType;
 }
