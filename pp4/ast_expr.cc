@@ -80,15 +80,15 @@ CompoundExpr::CompoundExpr(Operator *o, Expr *r)
 }
 
 void CompoundExpr::Check() {
-    right->Check();
     if(left!=NULL)
         left->Check();
+    right->Check();
 }
 
 void ArithmeticExpr::Check() {
-    right->Check();
     if(left!=NULL)
         left->Check();
+    right->Check();
 
     Type* rtype = right->GetType();
 
@@ -129,8 +129,8 @@ Type* ArithmeticExpr::GetType() {
 }
 
 void RelationalExpr::Check() {
-    right->Check();
     left->Check();
+    right->Check();
 
     Type* rtype = right->GetType();
     Type* ltype = left->GetType();
@@ -168,9 +168,9 @@ Type* EqualityExpr::GetType() {
 }
 
 void LogicalExpr::Check() {
-    right->Check();
     if(left!=NULL)
         left->Check();
+    right->Check();
 
     Type* rtype = right->GetType();
     if(left == NULL){
@@ -203,8 +203,8 @@ Type* LogicalExpr::GetType() {
 }
 
 void AssignExpr::Check() {
-    right->Check();
     left->Check();
+    right->Check();
 
     Type *rtype = right->GetType();
     Type *ltype = left->GetType();
@@ -287,6 +287,12 @@ void FieldAccess::Check() {
             return;
         }
        
+    } else {
+
+        Decl* d = this->FindDecl(field);
+        if(d == NULL)
+            ReportError::IdentifierNotDeclared(field, LookingForVariable);
+
     }
 }
 
@@ -313,6 +319,20 @@ void Call::Check() {
 
     field->Check();
     actuals->CheckAll();
+
+    if(base != NULL){
+
+        Decl* d = this->FindDecl(field);
+        if ( d == NULL )
+            ReportError::FieldNotFoundInBase(field, base->GetType());
+  
+    } else {
+
+        Decl* d = this->FindDecl(field);
+        if(d == NULL)
+            ReportError::IdentifierNotDeclared(field, LookingForFunction);
+
+    }
 }
 
 Type* Call::GetType() {
