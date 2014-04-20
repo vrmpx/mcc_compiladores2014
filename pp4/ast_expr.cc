@@ -9,6 +9,10 @@
 
 #include "errors.h"
 
+#include <stdio.h>
+ using namespace std;
+
+
 bool Expr::IsBool() {
     return GetType()->IsEquivalentTo(Type::boolType);
 }
@@ -91,7 +95,7 @@ void ArithmeticExpr::Check() {
     right->Check();
 
     Type* rtype = right->GetType();
-    
+
     if(rtype->IsEquivalentTo(Type::errorType))
         return;
 
@@ -211,9 +215,12 @@ void AssignExpr::Check() {
 }
 
 void This::Check() {
-    Scope* s = GetParent()->GetScope();
-    if (s && s->GetClassDecl())
-        return;
+    Node *parent = GetParent();
+    while(parent != NULL){
+        if(dynamic_cast<ClassDecl*>(parent) != NULL)
+            return;
+        parent = parent->GetParent();
+    }
     ReportError::ThisOutsideClassScope(this);
 }
 
@@ -263,6 +270,11 @@ FieldAccess::FieldAccess(Expr *b, Identifier *f)
 }
 
 void FieldAccess::Check() {
+    if(base!=NULL)
+        base->Check();
+    field->Check();
+
+
     if(base != NULL){
 
         Type* btype = base->GetType();
@@ -314,24 +326,51 @@ void Call::Check() {
     field->Check();
     actuals->CheckAll();
 
+    if(base != NULL) {
+        NamedType *nt = dynamic_cast<NamedType*>(base->GetType()); // Recuperamos la clase de base
+        if(nt != NULL){
 
-    Decl* d = this->FindDecl(field);
-    if(base != NULL){
-        if ( d == NULL )
-            ReportError::FieldNotFoundInBase(field, base->GetType());
+            ClassDecl* d = dynamic_cast<ClassDecl*>(this->FindDecl(nt->GetId()));
+            Scope *s = d->GetScope();
+     
+            //Buscamos la definicion de la funcion en su clase
+            Decl* lookup = s->Lookup(field);
+            if(!s || lookup == NULL){
+                ReportError::FieldNotFoundInBase(field, nt);
+                return;
+            }
+
+            CheckFunction(lookup);
+        }
+        //base no es un namedType??
+        //Probablemente LookingForClass
+
     } else {
-        if(d == NULL)
+        //Base is null 
+        Decl* d = this->FindDecl(field);
+        if ( d == NULL ){
             ReportError::IdentifierNotDeclared(field, LookingForFunction);
-    }
+            return;
+        }
 
+        CheckFunction(d);
+    }
+}
+
+void Call::CheckFunction(Decl* d){
+    //Contamos los parametros enviados y solicitados
     FnDecl* f = dynamic_cast<FnDecl*>(d);
     if(f != NULL){
+
         int numGiven = actuals->NumElements();
         int numExpected = f->GetActualsLength();
 
-        if (numGiven != numExpected)
+        if (numGiven != numExpected){
             ReportError::NumArgsMismatch(field, numExpected, numGiven);
+            return;
+        }
 
+        //Verificamos el tipo de cada param
         List<VarDecl*> *formals = f->GetFormals();
         Type *given, *expected;
         for(int i = 0; i < numGiven; i++){
@@ -340,8 +379,10 @@ void Call::Check() {
             if(!given->IsEquivalentTo(expected))
                 ReportError::ArgMismatch(actuals->Nth(i), i + 1, given, expected);
         }
+    } else { 
+        // d no es una funcion ??
+        ReportError::IdentifierNotDeclared(field, LookingForFunction);
     }
-
 }
 
 Type* Call::GetType() {
@@ -376,5 +417,13 @@ void NewArrayExpr::Check() {
 
 Type* NewArrayExpr::GetType() {
     return new ArrayType(elemType);
+}
+
+Type* ReadLineExpr::GetType() {
+    return Type::stringType;
+}
+
+Type* ReadIntegerExpr::GetType() {
+    return Type::intType;
 }
        

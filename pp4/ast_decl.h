@@ -67,6 +67,7 @@ class ClassDecl : public Decl
     bool IsClassDecl() { return true; }
     Scope *PrepareScope();
     Type* GetType() { return cType; }
+    Scope* GetScope() { return nodeScope; }
 };
 
 class InterfaceDecl : public Decl 

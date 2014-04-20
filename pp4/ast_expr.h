@@ -207,6 +207,9 @@ class Call : public Expr
     Call(yyltype loc, Expr *base, Identifier *field, List<Expr*> *args);
     Type* GetType();
     void Check();
+
+  private:
+    void CheckFunction(Decl* d);
 };
 
 class NewExpr : public Expr
@@ -216,6 +219,7 @@ class NewExpr : public Expr
     
   public:
     NewExpr(yyltype loc, NamedType *clsType);
+    Type* GetType() { return (Type*)cType; }
 };
 
 class NewArrayExpr : public Expr
@@ -234,12 +238,14 @@ class ReadIntegerExpr : public Expr
 {
   public:
     ReadIntegerExpr(yyltype loc) : Expr(loc) {}
+    Type* GetType();
 };
 
 class ReadLineExpr : public Expr
 {
   public:
     ReadLineExpr(yyltype loc) : Expr (loc) {}
+    Type* GetType();
 };
 
     

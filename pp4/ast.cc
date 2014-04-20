@@ -37,3 +37,8 @@ Identifier::Identifier(yyltype loc, const char *n) : Node(loc) {
     cached = NULL;
 } 
 
+Identifier::Identifier(const char *n) : Node() {
+    name = strdup(n);
+    cached = NULL;
+}
+

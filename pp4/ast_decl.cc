@@ -39,9 +39,6 @@ ClassDecl::ClassDecl(Identifier *n, NamedType *ex, List<NamedType*> *imp, List<D
 }
 
 void ClassDecl::Check() {
-
-    this->GetParent()->GetScope()->SetClassDecl(this);
-
     if (extends && !extends->IsClass()) {
         ReportError::IdentifierNotDeclared(extends->GetId(), LookingForClass);
         extends = NULL;
@@ -63,7 +60,9 @@ void ClassDecl::Check() {
 Scope *ClassDecl::PrepareScope()
 {
     if (nodeScope) return nodeScope;
-    nodeScope = new Scope();  
+    nodeScope = new Scope();
+    nodeScope->SetClassDecl(this);
+
     if (extends) {
         ClassDecl *ext = dynamic_cast<ClassDecl*>(parent->FindDecl(extends->GetId())); 
         if (ext) nodeScope->CopyFromScope(ext->PrepareScope(), this);

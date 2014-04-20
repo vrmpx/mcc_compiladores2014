@@ -2,6 +2,8 @@
 DCC=./dcc
 SAMPLES_DECAF=samples/*.decaf
 RESULTS=tested
+PASS=0
+TOTAL=0
 
 if [ ! -d $RESULTS ]; then
 	mkdir $RESULTS
@@ -23,5 +25,10 @@ do
 		echo "----------------- FAIL -----------------"
 	else
 		echo "----------------- PASS -----------------"
+		PASS=$(($PASS + 1))
 	fi
+	TOTAL=$(($TOTAL + 1))
 done
+
+echo "PASS/TOTAL = $PASS / $TOTAL"
+
