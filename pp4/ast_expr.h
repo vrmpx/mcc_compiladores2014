@@ -17,6 +17,8 @@
 class NamedType; // for new
 class Type; // for NewArray
 
+ClassDecl* GetClassFromScope(Node* node);
+Decl* FindDeclInClass(ClassDecl* classDecl, Identifier* field);
 
 class Expr : public Stmt 
 {

@@ -13,6 +13,26 @@
  using namespace std;
 
 
+ClassDecl* GetClassFromScope(Node* node){
+    ClassDecl* c;
+    while(node != NULL){
+        if((c = dynamic_cast<ClassDecl*>(node)) != NULL)
+            return c;
+        node = node->GetParent();
+    }
+    return NULL;
+}
+
+Decl* FindDeclInClass(ClassDecl* classDecl, Identifier* field){
+    Scope *s = classDecl->GetScope();
+
+    if(s == NULL)
+        return NULL;
+    
+    //Buscamos la definicion de la funcion en su clase
+    return s->Lookup(field);
+}
+
 bool Expr::IsBool() {
     return GetType()->IsEquivalentTo(Type::boolType);
 }
@@ -142,13 +162,7 @@ void RelationalExpr::Check() {
     if(ltype->IsEquivalentTo(Type::errorType) || rtype->IsEquivalentTo(Type::errorType))
             return;
 
-    if(rtype->IsEquivalentTo(Type::intType) && !ltype->IsEquivalentTo(Type::intType))
-        ReportError::IncompatibleOperands(op, ltype, rtype);
-    else if (rtype->IsEquivalentTo(Type::doubleType) && !ltype->IsEquivalentTo(Type::doubleType))
-        ReportError::IncompatibleOperands(op, ltype, rtype);
-    else if(!rtype->IsEquivalentTo(Type::intType) && ltype->IsEquivalentTo(Type::intType))
-        ReportError::IncompatibleOperands(op, ltype, rtype);
-    else if(!rtype->IsEquivalentTo(Type::doubleType) && ltype->IsEquivalentTo(Type::doubleType))
+    if(!rtype->IsEquivalentTo(ltype))
         ReportError::IncompatibleOperands(op, ltype, rtype);
 
 }
@@ -215,25 +229,14 @@ void AssignExpr::Check() {
 }
 
 void This::Check() {
-    Node *parent = GetParent();
-    while(parent != NULL){
-        if(dynamic_cast<ClassDecl*>(parent) != NULL)
-            return;
-        parent = parent->GetParent();
-    }
-    ReportError::ThisOutsideClassScope(this);
+    if(GetClassFromScope(this) == NULL)
+        ReportError::ThisOutsideClassScope(this);
 }
 
 Type* This::GetType() {
-    Scope *s = GetParent()->GetScope();
-    if (s != NULL){
-        ClassDecl *classDecl = s->GetClassDecl();
-        if(classDecl != NULL){
-            return classDecl->GetType();
-        }else{
-            return Type::errorType;
-        }
-    }
+    ClassDecl* c = GetClassFromScope(this);
+    if(c != NULL)
+        return c->GetType();
     return Type::errorType;
 }
 
@@ -281,12 +284,22 @@ void FieldAccess::Check() {
         NamedType* ntype = dynamic_cast<NamedType*>(btype);
         if(ntype != NULL){
             //Class.field
-            //Revisamos que nos encontramos en class scope
-            Scope *s = GetParent()->GetScope();
-            if(s == NULL || s->GetClassDecl() == NULL){
-                ReportError::InaccessibleField(field, btype);
-                return;
+
+            //Vertificamos que existe el campo
+            ClassDecl* d = dynamic_cast<ClassDecl*>(this->FindDecl(ntype->GetId()));
+            if( d != NULL ){
+                Decl* lookup = FindDeclInClass(d, field);
+                if ( lookup == NULL ){
+                    ReportError::FieldNotFoundInBase(field, ntype);
+                    return;
+                }
             }
+
+            //Revisamos que nos encontramos en class scope
+            ClassDecl* c = GetClassFromScope(this);
+            if(c == NULL)
+                ReportError::InaccessibleField(field, base->GetType());
+
         }else{
             //type.field
             ReportError::FieldNotFoundInBase(field, btype);
@@ -331,16 +344,15 @@ void Call::Check() {
         if(nt != NULL){
 
             ClassDecl* d = dynamic_cast<ClassDecl*>(this->FindDecl(nt->GetId()));
-            Scope *s = d->GetScope();
-     
-            //Buscamos la definicion de la funcion en su clase
-            Decl* lookup = s->Lookup(field);
-            if(!s || lookup == NULL){
-                ReportError::FieldNotFoundInBase(field, nt);
-                return;
+            if(d != NULL){
+                Decl* lookup = FindDeclInClass(d, field);
+                if(lookup == NULL){
+                    ReportError::FieldNotFoundInBase(field, nt);
+                    return;
+                }
+                CheckFunction(lookup);
             }
-
-            CheckFunction(lookup);
+            //d == null ???
         }
         //base no es un namedType??
         //Probablemente LookingForClass
@@ -376,8 +388,17 @@ void Call::CheckFunction(Decl* d){
         for(int i = 0; i < numGiven; i++){
             given = actuals->Nth(i)->GetType();
             expected = formals->Nth(i)->GetType();
-            if(!given->IsEquivalentTo(expected))
-                ReportError::ArgMismatch(actuals->Nth(i), i + 1, given, expected);
+
+            if(!given->IsEquivalentTo(expected)){
+                //Is expected NamedType?
+                if(dynamic_cast<NamedType*>(expected) != NULL){
+                    //Check against null
+                    if(!given->IsEquivalentTo(Type::nullType))
+                        ReportError::ArgMismatch(actuals->Nth(i), i + 1, given, expected);
+                } else {
+                    ReportError::ArgMismatch(actuals->Nth(i), i + 1, given, expected);
+                }
+            }
         }
     } else { 
         // d no es una funcion ??
