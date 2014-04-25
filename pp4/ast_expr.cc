@@ -110,9 +110,7 @@ void CompoundExpr::Check() {
 }
 
 void ArithmeticExpr::Check() {
-    if(left!=NULL)
-        left->Check();
-    right->Check();
+    CompoundExpr::Check();
 
     Type* rtype = right->GetType();
 
@@ -189,12 +187,16 @@ Type* EqualityExpr::GetType() {
 }
 
 void LogicalExpr::Check() {
-    if(left!=NULL)
-        left->Check();
-    right->Check();
+    CompoundExpr::Check();
 
-    if(!right->IsBool())
+    if(!right->IsBool()){
         ReportError::IncompatibleOperand(op, right->GetType());
+        return;
+    }
+    if(left && !left->IsBool()){
+        ReportError::IncompatibleOperands(op, right->GetType(), left->GetType());
+        return;
+    }
 }
 
 Type* LogicalExpr::GetType() {
@@ -277,7 +279,6 @@ void FieldAccess::Check() {
         base->Check();
     field->Check();
 
-
     if(base != NULL){
 
         Type* btype = base->GetType();
@@ -309,7 +310,7 @@ void FieldAccess::Check() {
     } else {
 
         Decl* d = this->FindDecl(field);
-        if(d == NULL)
+        if(d == NULL || dynamic_cast<VarDecl*>(d) == NULL)
             ReportError::IdentifierNotDeclared(field, LookingForVariable);
 
     }
@@ -355,7 +356,7 @@ void Call::Check() {
             //d == null ???
         }
         //base no es un namedType??
-        //Probablemente LookingForClass
+        ReportError::FieldNotFoundInBase(field, base->GetType()); 
 
     } else {
         //Base is null 
