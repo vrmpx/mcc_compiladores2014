@@ -317,12 +317,30 @@ void FieldAccess::Check() {
 }
 
 Type* FieldAccess::GetType() {
-    Decl *d = this->FindDecl(field);
-    VarDecl *varDecl = dynamic_cast<VarDecl*>(d);
-    if(varDecl!=NULL)
-        return varDecl->GetDeclaredType();
-    else
+    if ( base != NULL) {
+        //Obtenemos la clase de base
+        NamedType* ntype = dynamic_cast<NamedType*>(base->GetType());
+        if (ntype != NULL){
+
+            // cout << "FieldAccess::"<<field->GetName() << "::Check With Base " << ntype->GetId() << endl;
+
+            ClassDecl* d = dynamic_cast<ClassDecl*>(this->FindDecl(ntype->GetId()));
+            if ( d != NULL ){
+                //Buscamos la declaracion del campo en la clase
+                Decl* lookup = FindDeclInClass(d, field);
+                if ( lookup != NULL ){
+                    return lookup->GetType();
+                }
+            }
+        }
         return Type::errorType;
+    } else {
+        Decl* lookup = this->FindDecl(field);
+        if (lookup != NULL){
+            return lookup->GetType();
+        }
+        return Type::errorType;
+    }
 }
 
 Call::Call(yyltype loc, Expr *b, Identifier *f, List<Expr*> *a) : Expr(loc)  {
@@ -345,18 +363,20 @@ void Call::Check() {
         if(nt != NULL){
 
             ClassDecl* d = dynamic_cast<ClassDecl*>(this->FindDecl(nt->GetId()));
+
             if(d != NULL){
                 Decl* lookup = FindDeclInClass(d, field);
                 if(lookup == NULL){
                     ReportError::FieldNotFoundInBase(field, nt);
-                    return;
+                }else{
+                    CheckFunction(lookup);    
                 }
-                CheckFunction(lookup);
             }
             //d == null ???
+        }else{
+            //base no es un namedType??
+            ReportError::FieldNotFoundInBase(field, base->GetType()); 
         }
-        //base no es un namedType??
-        ReportError::FieldNotFoundInBase(field, base->GetType()); 
 
     } else {
         //Base is null 
@@ -408,12 +428,33 @@ void Call::CheckFunction(Decl* d){
 }
 
 Type* Call::GetType() {
-    Decl* d = FindDecl(field);
-    FnDecl* fn = dynamic_cast<FnDecl*>(d);
-    if(fn != NULL) {
-        return fn->GetType();
+
+    if (base != NULL){
+         //Obtenemos la clase de base
+        NamedType* ntype = dynamic_cast<NamedType*>(base->GetType());
+        if (ntype != NULL){
+
+            // cout << "FieldAccess::"<<field->GetName() << "::Check With Base " << ntype->GetId() << endl;
+
+            ClassDecl* d = dynamic_cast<ClassDecl*>(this->FindDecl(ntype->GetId()));
+            if ( d != NULL ){
+                //Buscamos la declaracion del campo en la clase
+                Decl* lookup = FindDeclInClass(d, field);
+                if ( lookup != NULL ){
+                    return lookup->GetType();
+                }
+            }
+        }
+    } else { 
+        Decl* d = FindDecl(field);
+        FnDecl* fn = dynamic_cast<FnDecl*>(d);
+        if(fn != NULL) {
+            return fn->GetType();
+        }
     }
+
     return Type::errorType;
+
 }
  
 

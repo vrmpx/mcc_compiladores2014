@@ -37,6 +37,7 @@ class Decl : public Node
     virtual bool IsInterfaceDecl() { return false; }
     virtual bool IsFnDecl() { return false; } 
     virtual bool IsMethodDecl() { return false; }
+    virtual Type* GetType() = 0;
 };
 
 class VarDecl : public Decl 
@@ -80,6 +81,7 @@ class InterfaceDecl : public Decl
     void Check();
     bool IsInterfaceDecl() { return true; }
     Scope *PrepareScope();
+    Type* GetType() { return NULL; }
 };
 
 class FnDecl : public Decl 
