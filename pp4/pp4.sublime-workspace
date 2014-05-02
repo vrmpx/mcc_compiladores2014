@@ -4,6 +4,50 @@
 		"selected_items":
 		[
 			[
+				"N",
+				"NULL"
+			],
+			[
+				"Find",
+				"FindDeclInClass"
+			],
+			[
+				"Typ",
+				"Type"
+			],
+			[
+				"Type",
+				"Type::errorType"
+			],
+			[
+				"Fie",
+				"FieldAccess::Check"
+			],
+			[
+				"en",
+				"endl"
+			],
+			[
+				"Rep",
+				"ReportError::IncompatibleOperands"
+			],
+			[
+				"named",
+				"namedType"
+			],
+			[
+				"Call",
+				"Call::Check"
+			],
+			[
+				"Cal",
+				"Call::Check"
+			],
+			[
+				"Is",
+				"IsBool"
+			],
+			[
 				"Che",
 				"CheckAll"
 			],
@@ -60,24 +104,12 @@
 				"IdentifierNotDeclared"
 			],
 			[
-				"Rep",
-				"ReportError"
-			],
-			[
 				"Class",
 				"ClassDecl"
 			],
 			[
 				"str",
 				"strdup"
-			],
-			[
-				"Type",
-				"Type"
-			],
-			[
-				"Typ",
-				"Type::intType"
 			],
 			[
 				"Ty",
@@ -158,10 +190,6 @@
 			[
 				"sub",
 				"subscript"
-			],
-			[
-				"Is",
-				"IsEquivalentTo"
 			],
 			[
 				"Ex",
@@ -408,10 +436,6 @@
 				"StmtBlock"
 			],
 			[
-				"N",
-				"Nth"
-			],
-			[
 				"Na",
 				"Name"
 			],
@@ -490,64 +514,16 @@
 			[
 				"fi",
 				"fi"
-			],
-			[
-				"va",
-				"VarDecl"
-			],
-			[
-				"ext",
-				"extType"
-			],
-			[
-				"type",
-				"typeName"
-			],
-			[
-				"ty",
-				"typeName"
-			],
-			[
-				"for",
-				"formals"
-			],
-			[
-				"mem",
-				"members"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "errors.h",
-			"settings":
-			{
-				"buffer_size": 4090,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "ast_expr.cc",
 			"settings":
 			{
-				"buffer_size": 12088,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "samples/bad9.decaf",
-			"settings":
-			{
-				"buffer_size": 245,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "samples/bad9.out",
-			"settings":
-			{
-				"buffer_size": 564,
+				"buffer_size": 13426,
 				"line_ending": "Unix"
 			}
 		},
@@ -560,10 +536,42 @@
 			}
 		},
 		{
-			"file": "ast_decl.cc",
+			"file": "test.log",
 			"settings":
 			{
-				"buffer_size": 4310,
+				"buffer_size": 2938,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "errors.h",
+			"settings":
+			{
+				"buffer_size": 4090,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "ast_type.h",
+			"settings":
+			{
+				"buffer_size": 1673,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "samples/queue.decaf",
+			"settings":
+			{
+				"buffer_size": 1374,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "ast_decl.h",
+			"settings":
+			{
+				"buffer_size": 2652,
 				"line_ending": "Unix"
 			}
 		}
@@ -571,9 +579,29 @@
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 347.0,
+		"height": 392.0,
 		"selected_items":
 		[
+			[
+				"git ad",
+				"Git: Add Current File"
+			],
+			[
+				"git com",
+				"Git: Commit"
+			],
+			[
+				"chec",
+				"Git: Checkout Current File"
+			],
+			[
+				"git lo",
+				"Git: Log All"
+			],
+			[
+				"git",
+				"Git: Status"
+			],
 			[
 				"git co",
 				"Git: Commit"
@@ -627,23 +655,11 @@
 				"Git: Add..."
 			],
 			[
-				"git lo",
-				"Git: Log All"
-			],
-			[
-				"git",
-				"Git: Status"
-			],
-			[
 				"git p",
 				"Git: Push"
 			],
 			[
 				"add ",
-				"Git: Add..."
-			],
-			[
-				"git ad",
 				"Git: Add..."
 			],
 			[
@@ -677,10 +693,6 @@
 			[
 				"insta",
 				"Package Control: Install Package"
-			],
-			[
-				"git com",
-				"Git: Commit"
 			],
 			[
 				"git ",
@@ -772,21 +784,30 @@
 	},
 	"file_history":
 	[
-		"/Users/victor/Workspace/compiladores/pp4/ast_type.h",
+		"/Users/victor/Workspace/compiladores/pp4/samples/queue.out",
+		"/Users/victor/Workspace/compiladores/pp4/samples/new.out",
+		"/Users/victor/Workspace/compiladores/pp4/parser.y",
+		"/Users/victor/Workspace/compiladores/pp4/samples/bad9.out",
+		"/Users/victor/Workspace/compiladores/pp4/samples/bad9.decaf",
 		"/Users/victor/Workspace/compiladores/pp4/ast_stmt.h",
+		"/Users/victor/Workspace/compiladores/pp4/ast_expr.h",
+		"/Users/victor/Workspace/compiladores/pp4/samples/bad4.decaf",
+		"/Users/victor/Workspace/compiladores/pp4/samples/queue.decaf",
+		"/Users/victor/Workspace/compiladores/pp4/samples/new.decaf",
+		"/Users/victor/Workspace/compiladores/pp4/samples/bad6.decaf",
+		"/Users/victor/Workspace/compiladores/pp4/scope.h",
+		"/Users/victor/Workspace/compiladores/pp4/samples/bad6.out",
+		"/Users/victor/Workspace/compiladores/pp4/ast.h",
+		"/Users/victor/Workspace/compiladores/pp4/ast_decl.cc",
 		"/Users/victor/Workspace/compiladores/pp4/ast_stmt.cc",
+		"/Users/victor/Workspace/compiladores/pp4/errors.h",
+		"/Users/victor/Workspace/compiladores/pp4/ast_type.h",
 		"/Users/victor/Workspace/compiladores/pp4/test.log",
 		"/Users/victor/Workspace/compiladores/pp4/samples/bad8.out",
 		"/Users/victor/Workspace/compiladores/pp4/samples/bad8.decaf",
 		"/Users/victor/Workspace/compiladores/pp4/ast_expr.cc",
-		"/Users/victor/Workspace/compiladores/pp4/ast_expr.h",
 		"/Users/victor/Workspace/compiladores/pp4/samples/t9.decaf",
-		"/Users/victor/Workspace/compiladores/pp4/ast.h",
 		"/Users/victor/Workspace/compiladores/pp4/ast_decl.h",
-		"/Users/victor/Workspace/compiladores/pp4/ast_decl.cc",
-		"/Users/victor/Workspace/compiladores/pp4/parser.y",
-		"/Users/victor/Workspace/compiladores/pp4/samples/bad4.decaf",
-		"/Users/victor/Workspace/compiladores/pp4/scope.h",
 		"/Users/victor/Workspace/compiladores/pp4/scope.cc",
 		"/Users/victor/Workspace/compiladores/pp4/testAll.sh",
 		"/Users/victor/Workspace/compiladores/pp4/samples/bad7.decaf",
@@ -796,8 +817,6 @@
 		"/Users/victor/Workspace/compiladores/pp4/samples/bad7.out",
 		"/Users/victor/Library/Application Support/Sublime Text 2/Packages/User/Default (OSX).sublime-keymap",
 		"/Users/victor/Workspace/compiladores/pp4/list.h",
-		"/Users/victor/Workspace/compiladores/pp4/samples/bad6.out",
-		"/Users/victor/Workspace/compiladores/pp4/samples/bad6.decaf",
 		"/Users/victor/Workspace/compiladores/pp4/utility.cc",
 		"/Users/victor/Workspace/compiladores/pp4/utility.h",
 		"/Users/victor/Workspace/compiladores/pp4/samples/bad5.decaf",
@@ -808,7 +827,6 @@
 		"/Users/victor/Workspace/compiladores/pp4/ast_type.cc",
 		"/Users/victor/Workspace/compiladores/pp4/samples/bad3.decaf",
 		"/Users/victor/Dropbox/MCC/MetodosAnaliticos/Tareas/Tarea3/tarea3.py",
-		"/Users/victor/Workspace/compiladores/pp4/errors.h",
 		"/Users/victor/Workspace/compiladores/pp4/samples/bad1.decaf",
 		"/Users/victor/Workspace/conacyt-cpg/POS/crossVal_CPG.py",
 		"/Users/victor/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
@@ -893,13 +911,7 @@
 		"/Users/victor/tweets_df.tbl",
 		"/Users/victor/Workspace/conacyt-cpg/POS/cross_validation_samples.py",
 		"/Users/victor/Dropbox/TwitterNLP/Tweets/FeatureExtraction/bag-of-words/bagofwordsModel.py",
-		"/Users/victor/Dropbox/TwitterNLP/StreamingAPI/sentimentAnalyzer/sentimentAnalyzer.py",
-		"/Users/victor/Dropbox/TwitterNLP/StreamingAPI/sentimentAnalyzer/preprocessTweet.py",
-		"/Users/victor/Dropbox/TwitterNLP/StreamingAPI/sentimentAnalyzer/database/DAO/DatabaseManager.py",
-		"/Users/victor/tweets_sinsent.tbl",
-		"/Users/victor/Dropbox/TwitterNLP/AWS/EMR/mapperFreqTweets.py",
-		"/Users/victor/Workspace/conacyt-cpg/POS/crossVal_CPG.pyc",
-		"/Users/victor/freqTweets.py"
+		"/Users/victor/Dropbox/TwitterNLP/StreamingAPI/sentimentAnalyzer/sentimentAnalyzer.py"
 	],
 	"find":
 	{
@@ -1086,144 +1098,23 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "errors.h",
-					"settings":
-					{
-						"buffer_size": 4090,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3217,
-								3272
-							]
-						],
-						"settings":
-						{
-							"annotations":
-							[
-								"TODO",
-								"README",
-								"FIXME"
-							],
-							"csslint_options":
-							{
-								"adjoining-classes": "warning",
-								"box-model": true,
-								"box-sizing": "warning",
-								"compatible-vendor-prefixes": "warning",
-								"display-property-grouping": true,
-								"duplicate-background-images": "warning",
-								"duplicate-properties": true,
-								"empty-rules": true,
-								"errors": true,
-								"fallback-colors": "warning",
-								"floats": "warning",
-								"font-faces": "warning",
-								"font-sizes": "warning",
-								"gradients": "warning",
-								"ids": "warning",
-								"import": "warning",
-								"important": "warning",
-								"known-properties": true,
-								"outline-none": "warning",
-								"overqualified-elements": "warning",
-								"qualified-headings": "warning",
-								"regex-selectors": "warning",
-								"rules-count": "warning",
-								"shorthand": "warning",
-								"star-property-hack": "warning",
-								"text-indent": "warning",
-								"underscore-property-hack": "warning",
-								"unique-headings": "warning",
-								"universal-selector": "warning",
-								"vendor-prefix": true,
-								"zero-units": "warning"
-							},
-							"gjslint_ignore":
-							[
-								110.0
-							],
-							"gjslint_options":
-							[
-							],
-							"javascript_linter": "jshint",
-							"jshint_options":
-							{
-								"browser": true,
-								"evil": true,
-								"regexdash": true,
-								"sub": true,
-								"trailing": true,
-								"wsh": true
-							},
-							"pep8": true,
-							"pep8_ignore":
-							[
-								"E501"
-							],
-							"perl_linter": "perlcritic",
-							"pyflakes_ignore":
-							[
-							],
-							"pyflakes_ignore_import_*": true,
-							"sublimelinter": true,
-							"sublimelinter_delay": 2.0,
-							"sublimelinter_disable":
-							[
-							],
-							"sublimelinter_executable_map":
-							{
-							},
-							"sublimelinter_fill_outlines": false,
-							"sublimelinter_gutter_marks": true,
-							"sublimelinter_gutter_marks_theme": "simple",
-							"sublimelinter_mark_style": "none",
-							"sublimelinter_notes": false,
-							"sublimelinter_objj_check_ascii": false,
-							"sublimelinter_popup_errors_on_save": false,
-							"sublimelinter_syntax_map":
-							{
-								"C++": "c",
-								"Python Django": "python",
-								"Ruby on Rails": "ruby"
-							},
-							"sublimelinter_wrap_find": true,
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1126.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
 					"file": "ast_expr.cc",
 					"settings":
 					{
-						"buffer_size": 12088,
+						"buffer_size": 13426,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2365,
-								2365
-							],
-							[
-								4820,
-								4820
+								12533,
+								12533
 							]
 						],
 						"settings":
@@ -1322,17 +1213,17 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1904.0,
+						"translation.y": 6695.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "samples/bad9.decaf",
+					"buffer": 1,
+					"file": "ast_stmt.cc",
 					"settings":
 					{
-						"buffer_size": 245,
+						"buffer_size": 3024,
 						"regions":
 						{
 						},
@@ -1345,95 +1236,34 @@
 						],
 						"settings":
 						{
-							"annotations":
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1293.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "test.log",
+					"settings":
+					{
+						"buffer_size": 2938,
+						"regions":
+						{
+						},
+						"selection":
+						[
 							[
-								"TODO",
-								"README",
-								"FIXME"
-							],
-							"csslint_options":
-							{
-								"adjoining-classes": "warning",
-								"box-model": true,
-								"box-sizing": "warning",
-								"compatible-vendor-prefixes": "warning",
-								"display-property-grouping": true,
-								"duplicate-background-images": "warning",
-								"duplicate-properties": true,
-								"empty-rules": true,
-								"errors": true,
-								"fallback-colors": "warning",
-								"floats": "warning",
-								"font-faces": "warning",
-								"font-sizes": "warning",
-								"gradients": "warning",
-								"ids": "warning",
-								"import": "warning",
-								"important": "warning",
-								"known-properties": true,
-								"outline-none": "warning",
-								"overqualified-elements": "warning",
-								"qualified-headings": "warning",
-								"regex-selectors": "warning",
-								"rules-count": "warning",
-								"shorthand": "warning",
-								"star-property-hack": "warning",
-								"text-indent": "warning",
-								"underscore-property-hack": "warning",
-								"unique-headings": "warning",
-								"universal-selector": "warning",
-								"vendor-prefix": true,
-								"zero-units": "warning"
-							},
-							"gjslint_ignore":
-							[
-								110.0
-							],
-							"gjslint_options":
-							[
-							],
-							"javascript_linter": "jshint",
-							"jshint_options":
-							{
-								"browser": true,
-								"evil": true,
-								"regexdash": true,
-								"sub": true,
-								"trailing": true,
-								"wsh": true
-							},
-							"pep8": true,
-							"pep8_ignore":
-							[
-								"E501"
-							],
-							"perl_linter": "perlcritic",
-							"pyflakes_ignore":
-							[
-							],
-							"pyflakes_ignore_import_*": true,
-							"sublimelinter": true,
-							"sublimelinter_delay": 2.0,
-							"sublimelinter_disable":
-							[
-							],
-							"sublimelinter_executable_map":
-							{
-							},
-							"sublimelinter_fill_outlines": false,
-							"sublimelinter_gutter_marks": true,
-							"sublimelinter_gutter_marks_theme": "simple",
-							"sublimelinter_mark_style": "none",
-							"sublimelinter_notes": false,
-							"sublimelinter_objj_check_ascii": false,
-							"sublimelinter_popup_errors_on_save": false,
-							"sublimelinter_syntax_map":
-							{
-								"C++": "c",
-								"Python Django": "python",
-								"Ruby on Rails": "ruby"
-							},
-							"sublimelinter_wrap_find": true,
+								55,
+								55
+							]
+						],
+						"settings":
+						{
 							"syntax": "Packages/Text/Plain text.tmLanguage"
 						},
 						"translation.x": 0.0,
@@ -1444,10 +1274,10 @@
 				},
 				{
 					"buffer": 3,
-					"file": "samples/bad9.out",
+					"file": "errors.h",
 					"settings":
 					{
-						"buffer_size": 564,
+						"buffer_size": 4090,
 						"regions":
 						{
 						},
@@ -1456,6 +1286,62 @@
 							[
 								0,
 								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1181.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "ast_type.h",
+					"settings":
+					{
+						"buffer_size": 1673,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 113.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 0,
+					"file": "ast_expr.cc",
+					"settings":
+					{
+						"buffer_size": 13426,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8706,
+								8706
 							]
 						],
 						"settings":
@@ -1549,6 +1435,34 @@
 								"Ruby on Rails": "ruby"
 							},
 							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 5600.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "samples/queue.decaf",
+					"settings":
+					{
+						"buffer_size": 1374,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								669,
+								669
+							]
+						],
+						"settings":
+						{
 							"syntax": "Packages/Text/Plain text.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
@@ -1560,235 +1474,29 @@
 					"type": "text"
 				},
 				{
-					"buffer": 4,
-					"file": "ast_stmt.cc",
+					"buffer": 6,
+					"file": "ast_decl.h",
 					"settings":
 					{
-						"buffer_size": 3024,
+						"buffer_size": 2652,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2819,
-								2819
+								2078,
+								2078
 							]
 						],
 						"settings":
 						{
-							"annotations":
-							[
-								"TODO",
-								"README",
-								"FIXME"
-							],
-							"csslint_options":
-							{
-								"adjoining-classes": "warning",
-								"box-model": true,
-								"box-sizing": "warning",
-								"compatible-vendor-prefixes": "warning",
-								"display-property-grouping": true,
-								"duplicate-background-images": "warning",
-								"duplicate-properties": true,
-								"empty-rules": true,
-								"errors": true,
-								"fallback-colors": "warning",
-								"floats": "warning",
-								"font-faces": "warning",
-								"font-sizes": "warning",
-								"gradients": "warning",
-								"ids": "warning",
-								"import": "warning",
-								"important": "warning",
-								"known-properties": true,
-								"outline-none": "warning",
-								"overqualified-elements": "warning",
-								"qualified-headings": "warning",
-								"regex-selectors": "warning",
-								"rules-count": "warning",
-								"shorthand": "warning",
-								"star-property-hack": "warning",
-								"text-indent": "warning",
-								"underscore-property-hack": "warning",
-								"unique-headings": "warning",
-								"universal-selector": "warning",
-								"vendor-prefix": true,
-								"zero-units": "warning"
-							},
-							"gjslint_ignore":
-							[
-								110.0
-							],
-							"gjslint_options":
-							[
-							],
-							"javascript_linter": "jshint",
-							"jshint_options":
-							{
-								"browser": true,
-								"evil": true,
-								"regexdash": true,
-								"sub": true,
-								"trailing": true,
-								"wsh": true
-							},
-							"pep8": true,
-							"pep8_ignore":
-							[
-								"E501"
-							],
-							"perl_linter": "perlcritic",
-							"pyflakes_ignore":
-							[
-							],
-							"pyflakes_ignore_import_*": true,
-							"sublimelinter": true,
-							"sublimelinter_delay": 2.0,
-							"sublimelinter_disable":
-							[
-							],
-							"sublimelinter_executable_map":
-							{
-							},
-							"sublimelinter_fill_outlines": false,
-							"sublimelinter_gutter_marks": true,
-							"sublimelinter_gutter_marks_theme": "simple",
-							"sublimelinter_mark_style": "none",
-							"sublimelinter_notes": false,
-							"sublimelinter_objj_check_ascii": false,
-							"sublimelinter_popup_errors_on_save": false,
-							"sublimelinter_syntax_map":
-							{
-								"C++": "c",
-								"Python Django": "python",
-								"Ruby on Rails": "ruby"
-							},
-							"sublimelinter_wrap_find": true,
 							"syntax": "Packages/C++/C++.tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1402.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "ast_decl.cc",
-					"settings":
-					{
-						"buffer_size": 4310,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								579,
-								579
-							]
-						],
-						"settings":
-						{
-							"annotations":
-							[
-								"TODO",
-								"README",
-								"FIXME"
-							],
-							"csslint_options":
-							{
-								"adjoining-classes": "warning",
-								"box-model": true,
-								"box-sizing": "warning",
-								"compatible-vendor-prefixes": "warning",
-								"display-property-grouping": true,
-								"duplicate-background-images": "warning",
-								"duplicate-properties": true,
-								"empty-rules": true,
-								"errors": true,
-								"fallback-colors": "warning",
-								"floats": "warning",
-								"font-faces": "warning",
-								"font-sizes": "warning",
-								"gradients": "warning",
-								"ids": "warning",
-								"import": "warning",
-								"important": "warning",
-								"known-properties": true,
-								"outline-none": "warning",
-								"overqualified-elements": "warning",
-								"qualified-headings": "warning",
-								"regex-selectors": "warning",
-								"rules-count": "warning",
-								"shorthand": "warning",
-								"star-property-hack": "warning",
-								"text-indent": "warning",
-								"underscore-property-hack": "warning",
-								"unique-headings": "warning",
-								"universal-selector": "warning",
-								"vendor-prefix": true,
-								"zero-units": "warning"
-							},
-							"gjslint_ignore":
-							[
-								110.0
-							],
-							"gjslint_options":
-							[
-							],
-							"javascript_linter": "jshint",
-							"jshint_options":
-							{
-								"browser": true,
-								"evil": true,
-								"regexdash": true,
-								"sub": true,
-								"trailing": true,
-								"wsh": true
-							},
-							"pep8": true,
-							"pep8_ignore":
-							[
-								"E501"
-							],
-							"perl_linter": "perlcritic",
-							"pyflakes_ignore":
-							[
-							],
-							"pyflakes_ignore_import_*": true,
-							"sublimelinter": true,
-							"sublimelinter_delay": 2.0,
-							"sublimelinter_disable":
-							[
-							],
-							"sublimelinter_executable_map":
-							{
-							},
-							"sublimelinter_fill_outlines": false,
-							"sublimelinter_gutter_marks": true,
-							"sublimelinter_gutter_marks_theme": "simple",
-							"sublimelinter_mark_style": "none",
-							"sublimelinter_notes": false,
-							"sublimelinter_objj_check_ascii": false,
-							"sublimelinter_popup_errors_on_save": false,
-							"sublimelinter_syntax_map":
-							{
-								"C++": "c",
-								"Python Django": "python",
-								"Ruby on Rails": "ruby"
-							},
-							"sublimelinter_wrap_find": true,
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 257.0,
+						"translation.y": 1005.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1842,6 +1550,70 @@
 		"selected_items":
 		[
 			[
+				"de",
+				"ast_decl.h"
+			],
+			[
+				"type",
+				"ast_type.h"
+			],
+			[
+				"que",
+				"samples/queue.decaf"
+			],
+			[
+				"new",
+				"samples/new.out"
+			],
+			[
+				"ast",
+				"ast_stmt.h"
+			],
+			[
+				"stm",
+				"ast_stmt.cc"
+			],
+			[
+				"error",
+				"errors.h"
+			],
+			[
+				"log",
+				"test.log"
+			],
+			[
+				"astexp",
+				"ast_expr.h"
+			],
+			[
+				"p",
+				"parser.y"
+			],
+			[
+				"bad6",
+				"samples/bad6.decaf"
+			],
+			[
+				"par",
+				"parser.y"
+			],
+			[
+				"bad4.",
+				"samples/bad4.decaf"
+			],
+			[
+				"sco",
+				"scope.h"
+			],
+			[
+				"ba",
+				"samples/bad6.out"
+			],
+			[
+				"as",
+				"ast.h"
+			],
+			[
 				"dec",
 				"ast_decl.cc"
 			],
@@ -1894,16 +1666,8 @@
 				"ast_type.h"
 			],
 			[
-				"par",
-				"parser.y"
-			],
-			[
 				"astde",
 				"ast_decl.cc"
-			],
-			[
-				"sco",
-				"scope.h"
 			],
 			[
 				"as_de",
@@ -1918,28 +1682,12 @@
 				"scope.h"
 			],
 			[
-				"de",
-				"ast_decl.h"
-			],
-			[
-				"ast",
-				"ast.h"
-			],
-			[
-				"as",
-				"ast.h"
-			],
-			[
 				"testal",
 				"testAll.sh"
 			],
 			[
 				"bad7",
 				"samples/bad7.decaf"
-			],
-			[
-				"log",
-				"test.log"
 			],
 			[
 				"errr",
@@ -1962,20 +1710,12 @@
 				"list.h"
 			],
 			[
-				"stm",
-				"ast_stmt.h"
-			],
-			[
 				"err",
 				"errors.cc"
 			],
 			[
 				"uti",
 				"utility.cc"
-			],
-			[
-				"bad6",
-				"samples/bad6.out"
 			],
 			[
 				".y",

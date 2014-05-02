@@ -335,11 +335,11 @@ Type* FieldAccess::GetType() {
         }
         return Type::errorType;
     } else {
-        Decl* lookup = this->FindDecl(field);
-        if (lookup != NULL){
-            return lookup->GetType();
-        }
-        return Type::errorType;
+        Decl* d = this->FindDecl(field);
+        if(d == NULL || dynamic_cast<VarDecl*>(d) == NULL)
+            return Type::errorType;
+
+        return d->GetType();
     }
 }
 
@@ -361,7 +361,6 @@ void Call::Check() {
     if(base != NULL) {
         NamedType *nt = dynamic_cast<NamedType*>(base->GetType()); // Recuperamos la clase de base
         if(nt != NULL){
-
             ClassDecl* d = dynamic_cast<ClassDecl*>(this->FindDecl(nt->GetId()));
 
             if(d != NULL){
@@ -374,7 +373,12 @@ void Call::Check() {
             }
             //d == null ???
         }else{
-            //base no es un namedType??
+
+            ArrayType* at = dynamic_cast<ArrayType*>(base->GetType());
+            if(at != NULL){
+                return;
+            }
+
             ReportError::FieldNotFoundInBase(field, base->GetType()); 
         }
 
