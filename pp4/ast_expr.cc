@@ -467,6 +467,12 @@ NewExpr::NewExpr(yyltype loc, NamedType *c) : Expr(loc) {
   (cType=c)->SetParent(this);
 }
 
+void NewExpr::Check() {
+    if (!cType->GetDeclForType()) {
+        ReportError::IdentifierNotDeclared(cType->GetId(), LookingForClass);
+    }
+}
+
 
 NewArrayExpr::NewArrayExpr(yyltype loc, Expr *sz, Type *et) : Expr(loc) {
     Assert(sz != NULL && et != NULL);

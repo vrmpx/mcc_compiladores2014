@@ -1,13 +1,5 @@
 Checking bad1: ----------------- PASS -----------------
-Checking bad10: ----------------- FAIL -----------------
-12a13,18
-> 
-> *** Error line 5.
->    var = New(Missing);
->              ^^^^^^^
-> *** No declaration found for class 'Missing'
-> 
------------------ FAIL -----------------
+Checking bad10: ----------------- PASS -----------------
 Checking bad11: ----------------- FAIL -----------------
 7a8,13
 > *** Error line 6.
@@ -18,13 +10,7 @@ Checking bad11: ----------------- FAIL -----------------
 > 
 ----------------- FAIL -----------------
 Checking bad12: ----------------- FAIL -----------------
-31a32,43
-> *** Error line 15.
->   New(A);
->       ^
-> *** No declaration found for class 'A'
-> 
-> 
+37a38,43
 > *** Error line 16.
 >   New(Treat);
 >       ^^^^^
@@ -134,4 +120,4 @@ Checking t9: ----------------- FAIL -----------------
 < *** Incompatible operands: Animal = Cow
 < 
 ----------------- FAIL -----------------
-PASS/TOTAL = 18 / 27
+PASS/TOTAL = 19 / 27

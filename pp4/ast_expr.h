@@ -222,6 +222,7 @@ class NewExpr : public Expr
   public:
     NewExpr(yyltype loc, NamedType *clsType);
     Type* GetType() { return (Type*)cType; }
+    void Check();
 };
 
 class NewArrayExpr : public Expr
