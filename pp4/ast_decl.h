@@ -19,6 +19,7 @@ class Stmt;
 class FnDecl;
 class InterfaceDecl;
 
+
 class Decl : public Node 
 {
   protected:
@@ -65,10 +66,15 @@ class ClassDecl : public Decl
     ClassDecl(Identifier *name, NamedType *extends, 
               List<NamedType*> *implements, List<Decl*> *members);
     void Check();
+    void CheckImplemented(InterfaceDecl *in, ClassDecl *actual, NamedType *intype);
     bool IsClassDecl() { return true; }
     Scope *PrepareScope();
     Type* GetType() { return cType; }
     Scope* GetScope() { return nodeScope; }
+    bool Extends(Type* other);
+    List<Decl*> *GetMembers() { return members; }
+    NamedType* GetExtends() { return extends; }
+    List<InterfaceDecl*> *GetImplements() { return convImp; }
 };
 
 class InterfaceDecl : public Decl 
@@ -82,6 +88,7 @@ class InterfaceDecl : public Decl
     bool IsInterfaceDecl() { return true; }
     Scope *PrepareScope();
     Type* GetType() { return NULL; }
+    List<Decl*>* GetMembers() { return members; }
 };
 
 class FnDecl : public Decl 

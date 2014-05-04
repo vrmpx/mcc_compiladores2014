@@ -100,6 +100,7 @@ void ReturnStmt::Check() {
 
     Type *expected = fn->GetType();
     Type *actual = expr->GetType();
+
     if (!expected->IsEquivalentTo(actual)){
         ReportError::ReturnMismatch(this, actual, expected);
         return;

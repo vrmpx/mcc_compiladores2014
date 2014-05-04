@@ -1,23 +1,7 @@
 Checking bad1: ----------------- PASS -----------------
 Checking bad10: ----------------- PASS -----------------
-Checking bad11: ----------------- FAIL -----------------
-7a8,13
-> *** Error line 6.
-> class Number implements Printable {
->                         ^^^^^^^^^
-> *** Class 'Number' does not implement entire interface 'Printable'
-> 
-> 
------------------ FAIL -----------------
-Checking bad12: ----------------- FAIL -----------------
-37a38,43
-> *** Error line 16.
->   New(Treat);
->       ^^^^^
-> *** No declaration found for class 'Treat'
-> 
-> 
------------------ FAIL -----------------
+Checking bad11: ----------------- PASS -----------------
+Checking bad12: ----------------- PASS -----------------
 Checking bad2: ----------------- PASS -----------------
 Checking bad3: ----------------- PASS -----------------
 Checking bad4: ----------------- PASS -----------------
@@ -80,21 +64,7 @@ Checking new: ----------------- FAIL -----------------
 Checking queue: ----------------- PASS -----------------
 Checking stack: ----------------- PASS -----------------
 Checking t1: ----------------- PASS -----------------
-Checking t10: ----------------- FAIL -----------------
-1,12d0
-< 
-< *** Error line 21.
-<        return;
-<        ^^^^^^
-< *** Incompatible return: error given, void expected
-< 
-< 
-< *** Error line 43.
-<    veggies[0] = New(Squash);
-<               ^
-< *** Incompatible operands: Vegetable = Squash
-< 
------------------ FAIL -----------------
+Checking t10: ----------------- PASS -----------------
 Checking t12: ----------------- PASS -----------------
 Checking t13: ----------------- FAIL -----------------
 1,6d0
@@ -111,13 +81,5 @@ Checking t4: ----------------- PASS -----------------
 Checking t5: ----------------- PASS -----------------
 Checking t6: ----------------- PASS -----------------
 Checking t7: ----------------- PASS -----------------
-Checking t9: ----------------- FAIL -----------------
-1,6d0
-< 
-< *** Error line 40.
-<   b = betsy;
-<     ^
-< *** Incompatible operands: Animal = Cow
-< 
------------------ FAIL -----------------
-PASS/TOTAL = 19 / 27
+Checking t9: ----------------- PASS -----------------
+PASS/TOTAL = 23 / 27

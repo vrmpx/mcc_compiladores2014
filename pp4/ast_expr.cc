@@ -43,7 +43,7 @@ Type* Expr::GetType() {
 
 
 Type* EmptyExpr::GetType() {
-    return Type::errorType;
+    return Type::voidType;
 }
 
 IntConstant::IntConstant(yyltype loc, int val) : Expr(loc) {
@@ -226,8 +226,21 @@ void AssignExpr::Check() {
     if(ltype->IsEquivalentTo(Type::errorType) || rtype->IsEquivalentTo(Type::errorType))
         return;
 
-    if(!rtype->IsEquivalentTo(ltype))
-        ReportError::IncompatibleOperands(op, ltype, rtype);
+    if(rtype->IsEquivalentTo(ltype))
+        return;
+
+    CheckExtends(rtype, ltype);
+}
+
+void AssignExpr::CheckExtends(Type* rtype, Type* ltype) {
+    NamedType *ntright = dynamic_cast<NamedType*>(rtype);
+    if(ntright != NULL){
+        ClassDecl* rightDecl = dynamic_cast<ClassDecl*>(this->FindDecl(ntright->GetId()));
+        if(rightDecl != NULL && rightDecl->Extends(ltype))
+            return;
+
+    }
+    ReportError::IncompatibleOperands(op, ltype, rtype);
 }
 
 void This::Check() {
@@ -468,7 +481,8 @@ NewExpr::NewExpr(yyltype loc, NamedType *c) : Expr(loc) {
 }
 
 void NewExpr::Check() {
-    if (!cType->GetDeclForType()) {
+    Decl* d = cType->GetDeclForType();
+    if( d == NULL || dynamic_cast<ClassDecl*>(d) == NULL) {
         ReportError::IdentifierNotDeclared(cType->GetId(), LookingForClass);
     }
 }

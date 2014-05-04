@@ -7,6 +7,9 @@
 #include "ast_stmt.h"
 #include "scope.h"
 #include "errors.h"
+#include <stdio.h>
+using namespace std;
+
         
          
 Decl::Decl(Identifier *n) : Node(*n->GetLocation()) {
@@ -49,9 +52,41 @@ void ClassDecl::Check() {
             ReportError::IdentifierNotDeclared(in->GetId(), LookingForInterface);
             implements->RemoveAt(i--);
         }
+        // cout << "CheckImplemented(" << in->GetId() << ")" << endl;
+        //Find decl in scope
+        InterfaceDecl *interfaceDecl = dynamic_cast<InterfaceDecl*>(this->FindDecl(in->GetId()));
+        CheckImplemented(interfaceDecl, this, in);
     }
     PrepareScope();
     members->CheckAll();
+}
+
+void ClassDecl::CheckImplemented(InterfaceDecl* in, ClassDecl* actual, NamedType *intype){
+    List<Decl*> *declsToImplement = in->GetMembers();
+    List<Decl*> *declsImplemented = actual->GetMembers();
+    bool found;
+    for(int i = 0; i < declsToImplement->NumElements(); i++){
+        found = false;
+
+        //Buscamos en el actual
+        for(int j = 0; j < declsImplemented->NumElements() && !found; j++){
+            if(strcmp(declsImplemented->Nth(j)->GetName(), declsToImplement->Nth(i)->GetName()) == 0)
+                found = true;
+        }
+
+        //Recorrimos todos los metodos de la clase y no encontramos el bueno
+        if(!found){
+            //Checamos el papa
+            if(actual->GetExtends() != NULL){
+                //Find decl in scope
+                ClassDecl *d = dynamic_cast<ClassDecl*>(this->FindDecl(actual->GetExtends()->GetId()));
+                CheckImplemented(in, d, intype);
+            }else{
+                //No encontramos nada...
+                ReportError::InterfaceNotImplemented(this, intype);
+            }
+        }
+    }
 }
 
 // This is not done very cleanly. I should sit down and sort this out. Right now
@@ -72,14 +107,21 @@ Scope *ClassDecl::PrepareScope()
         NamedType *in = implements->Nth(i);
         InterfaceDecl *id = dynamic_cast<InterfaceDecl*>(in->FindDecl(in->GetId()));
         if (id) {
-		nodeScope->CopyFromScope(id->PrepareScope(), NULL);
+        nodeScope->CopyFromScope(id->PrepareScope(), NULL);
             convImp->Append(id);
-	  }
+      }
     }
     members->DeclareAll(nodeScope);
     return nodeScope;
 }
 
+bool ClassDecl::Extends(Type* other) {
+    if(!extends)
+        return false;
+
+    NamedType* nt = dynamic_cast<NamedType*>(other);
+    return (other && other->IsEquivalentTo(extends));
+}
 
 
 InterfaceDecl::InterfaceDecl(Identifier *n, List<Decl*> *m) : Decl(n) {
