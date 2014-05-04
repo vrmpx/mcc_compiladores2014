@@ -66,15 +66,7 @@ Checking stack: ----------------- PASS -----------------
 Checking t1: ----------------- PASS -----------------
 Checking t10: ----------------- PASS -----------------
 Checking t12: ----------------- PASS -----------------
-Checking t13: ----------------- FAIL -----------------
-1,6d0
-< 
-< *** Error line 35.
-<   s = New(Rectangle);
-<     ^
-< *** Incompatible operands: Colorable = Rectangle
-< 
------------------ FAIL -----------------
+Checking t13: ----------------- PASS -----------------
 Checking t2: ----------------- PASS -----------------
 Checking t3: ----------------- PASS -----------------
 Checking t4: ----------------- PASS -----------------
@@ -82,4 +74,4 @@ Checking t5: ----------------- PASS -----------------
 Checking t6: ----------------- PASS -----------------
 Checking t7: ----------------- PASS -----------------
 Checking t9: ----------------- PASS -----------------
-PASS/TOTAL = 23 / 27
+PASS/TOTAL = 24 / 27

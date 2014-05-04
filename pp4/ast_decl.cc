@@ -51,11 +51,13 @@ void ClassDecl::Check() {
         if (!in->IsInterface()) {
             ReportError::IdentifierNotDeclared(in->GetId(), LookingForInterface);
             implements->RemoveAt(i--);
+        }else{
+            // cout << "CheckImplemented(" << in->GetId() << ")" << endl;
+            //Find decl in scope
+            InterfaceDecl *interfaceDecl = dynamic_cast<InterfaceDecl*>(this->FindDecl(in->GetId()));
+            if (in != NULL)
+                CheckImplemented(interfaceDecl, this, in);
         }
-        // cout << "CheckImplemented(" << in->GetId() << ")" << endl;
-        //Find decl in scope
-        InterfaceDecl *interfaceDecl = dynamic_cast<InterfaceDecl*>(this->FindDecl(in->GetId()));
-        CheckImplemented(interfaceDecl, this, in);
     }
     PrepareScope();
     members->CheckAll();
@@ -120,7 +122,41 @@ bool ClassDecl::Extends(Type* other) {
         return false;
 
     NamedType* nt = dynamic_cast<NamedType*>(other);
-    return (other && other->IsEquivalentTo(extends));
+    return (nt && nt->IsEquivalentTo(extends));
+}
+
+bool ClassDecl::Implements(Type *other) {
+    NamedType* nt = dynamic_cast<NamedType*>(other);
+    if (nt == NULL || !nt->IsInterface())
+        return false;
+
+    // cout << "nt is interface" << endl;
+
+    //find decl for type
+    InterfaceDecl* interf = dynamic_cast<InterfaceDecl*>(this->FindDecl(nt->GetId()));
+
+    // cout << interf << endl;
+
+    return Implements(interf, this);
+}
+
+bool ClassDecl::Implements(InterfaceDecl* interf, ClassDecl *actual) {
+    List<InterfaceDecl*> *imps = actual->GetImplements();
+    for (int i = 0; i < imps->NumElements(); i++){
+        // cout << "Checking: " << imps->Nth(i)->GetName() << endl;
+        if(strcmp(imps->Nth(i)->GetName(), interf->GetName()) == 0)
+            return true;
+    }
+    if(actual->GetExtends() != NULL){
+        //Checamos en el padre
+        ClassDecl *padre = dynamic_cast<ClassDecl*>(this->FindDecl(actual->GetExtends()->GetId()));
+        // cout << "Nuevo padre: " << padre << endl;
+        return Implements(interf, padre);
+    }else{
+        //No se encontro y regresamos false
+        // cout << "Returning false" << endl;
+        return false;
+    }
 }
 
 

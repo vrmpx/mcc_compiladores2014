@@ -72,6 +72,8 @@ class ClassDecl : public Decl
     Type* GetType() { return cType; }
     Scope* GetScope() { return nodeScope; }
     bool Extends(Type* other);
+    bool Implements(Type* other);
+    bool Implements(InterfaceDecl *interf, ClassDecl *actual);
     List<Decl*> *GetMembers() { return members; }
     NamedType* GetExtends() { return extends; }
     List<InterfaceDecl*> *GetImplements() { return convImp; }

@@ -236,9 +236,11 @@ void AssignExpr::CheckExtends(Type* rtype, Type* ltype) {
     NamedType *ntright = dynamic_cast<NamedType*>(rtype);
     if(ntright != NULL){
         ClassDecl* rightDecl = dynamic_cast<ClassDecl*>(this->FindDecl(ntright->GetId()));
-        if(rightDecl != NULL && rightDecl->Extends(ltype))
-            return;
 
+        // cout << "CheckExtends: " << rightDecl << " vs. " << ltype << endl;
+
+        if(rightDecl != NULL && (rightDecl->Extends(ltype) || rightDecl->Implements(ltype)))
+            return;
     }
     ReportError::IncompatibleOperands(op, ltype, rtype);
 }
