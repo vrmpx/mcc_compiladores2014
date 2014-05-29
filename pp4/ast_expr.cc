@@ -189,11 +189,15 @@ Type* EqualityExpr::GetType() {
 void LogicalExpr::Check() {
     CompoundExpr::Check();
 
-    if(!right->IsBool()){
+    // cout << "LogicalExpr::Check" << endl;
+
+    // cout << right << endl;
+
+    if(!right->GetType()->IsEquivalentTo(Type::boolType)){
         ReportError::IncompatibleOperand(op, right->GetType());
         return;
     }
-    if(left && !left->IsBool()){
+    if(left && !left->GetType()->IsEquivalentTo(Type::boolType)){
         ReportError::IncompatibleOperands(op, right->GetType(), left->GetType());
         return;
     }

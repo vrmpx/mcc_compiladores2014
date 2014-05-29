@@ -29,6 +29,7 @@ class Decl : public Node
     Decl(Identifier *name);
     friend std::ostream& operator<<(std::ostream& out, Decl *d) { return out << d->id; }
     Identifier *GetId() { return id; }
+    Identifier *GetID() { return id; }
     const char *GetName() { return id->GetName(); }
     
     virtual bool ConflictsWithPrevious(Decl *prev);
@@ -74,6 +75,7 @@ class ClassDecl : public Decl
     List<Decl*> *GetMembers() { return members; }
     NamedType* GetExtends() { return extends; }
     List<InterfaceDecl*> *GetImplements() { return convImp; }
+    List<const char*> GetFieldLabels() { return NULL }; // FALTA
 };
 
 class InterfaceDecl : public Decl 
@@ -105,6 +107,8 @@ class FnDecl : public Decl
     Type* GetType() { return returnType; }
     int GetActualsLength() { return formals->NumElements(); }
     List<VarDecl*>* GetFormals() { return formals; }
+    Location* Emit();
+    int UpdateFrame(); //Falta
 };
 
 #endif

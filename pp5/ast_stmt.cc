@@ -9,6 +9,7 @@
 #include "scope.h"
 #include "errors.h"
 
+CodeGenerator *Program::cg = new CodeGenerator();
 
 Program::Program(List<Decl*> *d) {
     Assert(d != NULL);
@@ -21,7 +22,7 @@ void Program::Check() {
     decls->CheckAll();
 }
 
-void Program::Emit() {
+Location* Program::Emit() {
     /* pp5: here is where the code generation is kicked off.
      *      The general idea is perform a tree traversal of the
      *      entire program, generating instructions as you go.
@@ -29,6 +30,9 @@ void Program::Emit() {
      *      which makes for a great use of inheritance and
      *      polymorphism in the node classes.
      */
+     for(int i = 0; i < decls->NumElements(); i++){
+        decls->Nth(i)->Emit();
+     }
 }
 
 StmtBlock::StmtBlock(List<VarDecl*> *d, List<Stmt*> *s) {
@@ -43,6 +47,16 @@ void StmtBlock::Check() {
     stmts->CheckAll();
 }
 
+Location* StmtBlock::Emit() { 
+    for(int i = 0; i < decls->NumElements(); i++){
+        decls->Nth(i)->Emit();
+    }
+
+    for(int i = 0; i < stmts->NumElements(); i++){
+        stmts->Nth(i)->Emit();
+    }
+}
+
 ConditionalStmt::ConditionalStmt(Expr *t, Stmt *b) { 
     Assert(t != NULL && b != NULL);
     (test=t)->SetParent(this); 
@@ -51,6 +65,11 @@ ConditionalStmt::ConditionalStmt(Expr *t, Stmt *b) {
 
 void ConditionalStmt::Check() {
     body->Check();
+}
+
+Location* ConditionalStmt::Emit() {
+    test->Emit();
+    body->Emit();
 }
 
 void LoopStmt::Check() {
@@ -64,6 +83,12 @@ ForStmt::ForStmt(Expr *i, Expr *t, Expr *s, Stmt *b): LoopStmt(t, b) {
     (step=s)->SetParent(this);
 }
 
+Location* ForStmt::Emit() {
+    ConditionalStmt::Emit();
+    init->Emit();
+    step->Emit();
+}
+
 IfStmt::IfStmt(Expr *t, Stmt *tb, Stmt *eb): ConditionalStmt(t, tb) { 
     Assert(t != NULL && tb != NULL); // else can be NULL
     elseBody = eb;
@@ -73,6 +98,13 @@ IfStmt::IfStmt(Expr *t, Stmt *tb, Stmt *eb): ConditionalStmt(t, tb) {
 void IfStmt::Check() {
     ConditionalStmt::Check();
     if (elseBody) elseBody->Check();
+}
+
+Location* IfStmt::Emit() {
+    ConditionalStmt::Emit();
+    if(elseBody)
+        elseBody->Emit();
+    return NULL;
 }
 
 ReturnStmt::ReturnStmt(yyltype loc, Expr *e) : Stmt(loc) { 
@@ -87,3 +119,17 @@ PrintStmt::PrintStmt(List<Expr*> *a) {
 
 void PrintStmt::Check() {args->CheckAll();}
 
+Location* PrintStmt::Emit() {
+    for (int i = 0; i < args->NumElements(); i++){
+        Expr *expr = args->Nth(i);
+
+        Type *type = expr->GetType();
+        if (type == Type::intType)
+            Program::cg->GenBuiltInCall(PrintInt, expr->Emit());
+        else if (type == Type::stringType)
+            Program::cg->GenBuiltInCall(PrintString, expr->Emit());
+        else if (type == Type::boolType)
+            Program::cg->GenBuiltInCall(PrintBool, expr->Emit());
+    }
+    return NULL;
+}

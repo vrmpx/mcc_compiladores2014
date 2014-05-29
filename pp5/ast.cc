@@ -31,14 +31,44 @@ Decl *Node::FindDecl(Identifier *idToFind, lookup l) {
         return parent->FindDecl(idToFind, l);
     return NULL;
 }
-	 
+
+FnDecl *Node::GetEnclosFunc(Node *node) {
+    Node *parent = node->GetParent();
+    FnDecl *fndecl = NULL;
+
+    while(parent != NULL){
+        if ((fndecl = dynamic_cast<FnDecl*>(parent)))
+            break;
+        parent = parent->GetParent();
+    }
+    return fndecl;
+}
+
+ClassDecl *Node::GetEnclosClass(Node *node) {
+    Node *parent = node->GetParent();
+    ClassDecl *classDecl = NULL;
+
+    while(parent != NULL){
+        if ((classDecl = dynamic_cast<ClassDecl*>(parent)))
+            break;
+        parent = parent->GetParent();
+    }
+    return classDecl;
+}
+
+ 
 Identifier::Identifier(yyltype loc, const char *n) : Node(loc) {
     name = strdup(n);
     cached = NULL;
+
+    this->memLoc = NULL; 
 } 
 
 Identifier::Identifier(const char *n) : Node() {
     name = strdup(n);
     cached = NULL;
+
+
+    this->memLoc = NULL;
 }
 

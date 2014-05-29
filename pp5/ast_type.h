@@ -12,6 +12,8 @@
 #include "ast.h"
 #include "list.h"
 #include <iostream>
+#include <string>
+
 
 
 class Type : public Node 

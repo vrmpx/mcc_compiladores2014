@@ -7,6 +7,7 @@
 #include "ast_stmt.h"
 #include "scope.h"
 #include "errors.h"
+#include "tac.h"
 #include <stdio.h>
 using namespace std;
 
@@ -118,5 +119,14 @@ void FnDecl::Check() {
     }
 }
 
+Location* FnDecl::Emit() {
+    Program::cg->GenLabel("main");
+    BeginFunc *beginfun = Program::cg->GenBeginFunc();
 
+    if(body)
+        body->Emit();
+
+    beginfun->SetFrameSize(256);
+    Program::cg->GenEndFunc();
+}
 

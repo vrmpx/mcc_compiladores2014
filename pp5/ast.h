@@ -26,12 +26,14 @@
 
 #include <stdlib.h>   // for NULL
 #include "location.h"
+#include "tac.h"
 #include <iostream>
 class Scope;
 class Decl;
 class Identifier;
 class Type;
-
+class FnDecl;
+class ClassDecl;
 class Node 
 {
   protected:
@@ -53,6 +55,12 @@ class Node
     virtual Scope *PrepareScope() { return NULL; }
 
     Scope* GetScope() { return nodeScope; }
+    virtual Location* Emit() { return NULL; } //not abstract, since some nodes don't emit anything
+
+    // get enclosing function to backpatch the frame size
+    FnDecl *GetEnclosFunc(Node *node);
+    // for methods
+    ClassDecl *GetEnclosClass(Node *node);
 };
    
 
@@ -61,12 +69,16 @@ class Identifier : public Node
   protected:
     char *name;
     Decl *cached;
+    Location *memLoc;
     
   public:
     Identifier(yyltype loc, const char *name);
     Identifier(const char *name);
     friend std::ostream& operator<<(std::ostream& out, Identifier *id) { return out << id->name; }
     const char *GetName() { return name; }
+
+    Location *GetMemLoc() { return memLoc; }
+    void SetMemLoc(Location *loc) { memLoc = loc; }
 };
 
 

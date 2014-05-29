@@ -12,20 +12,22 @@
 
 #include "list.h"
 #include "ast.h"
+#include "codegen.h"
 
 class Decl;
 class VarDecl;
 class Expr;
-  
+
 class Program : public Node
 {
   protected:
      List<Decl*> *decls;
      
   public:
+     static CodeGenerator *cg;
      Program(List<Decl*> *declList);
      void Check();
-     void Emit();
+     Location* Emit();
 };
 
 class Stmt : public Node
@@ -44,6 +46,7 @@ class StmtBlock : public Stmt
   public:
     StmtBlock(List<VarDecl*> *variableDeclarations, List<Stmt*> *statements);
     void Check();
+    Location* Emit();
 };
 
   
@@ -56,6 +59,7 @@ class ConditionalStmt : public Stmt
   public:
     ConditionalStmt(Expr *testExpr, Stmt *body);
     void Check();
+    Location* Emit();
 };
 
 class LoopStmt : public ConditionalStmt 
@@ -73,6 +77,7 @@ class ForStmt : public LoopStmt
   
   public:
     ForStmt(Expr *init, Expr *test, Expr *step, Stmt *body);
+    Location* Emit();
 };
 
 class WhileStmt : public LoopStmt 
@@ -89,6 +94,7 @@ class IfStmt : public ConditionalStmt
   public:
     IfStmt(Expr *test, Stmt *thenBody, Stmt *elseBody);
     void Check();
+    Location* Emit();
 };
 
 class BreakStmt : public Stmt 
@@ -114,6 +120,7 @@ class PrintStmt : public Stmt
   public:
     PrintStmt(List<Expr*> *arguments);
     void Check();
+    Location* Emit();
 };
 
 
