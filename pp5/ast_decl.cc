@@ -121,7 +121,8 @@ Location* FnDecl::Emit() {
 
     for (int i = 0; i < this->formals->NumElements(); i++) {
         VarDecl *vardecl = this->formals->Nth(i);
-        vardecl->GetId()->SetMemLoc(Program::cg->GenTempVar());
+        vardecl->GetId()->SetMemLoc(Program::cg->GenTempVar(this->paramOffset, vardecl->GetName()));
+        this->paramOffset += CodeGenerator::VarSize;
     }
 
     beginFunc = Program::cg->GenBeginFunc();

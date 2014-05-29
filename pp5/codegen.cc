@@ -24,17 +24,13 @@ char *CodeGenerator::NewLabel()
 }
 
 
-Location *CodeGenerator::GenTempVar()
+Location *CodeGenerator::GenTempVar(int localOffset, const char *name)
 {
   static int nextTempNum;
   char temp[10];
   Location *result = NULL;
   sprintf(temp, "_tmp%d", nextTempNum++);
-  /* pp5: need to create variable in proper location
-     in stack frame for use as temporary. Until you
-     do that, the assert below will always fail to remind
-     you this needs to be implemented  */
-  Assert(result != NULL);
+  result = new Location(fpRelative, localOffset, temp);
   return result;
 }
 
@@ -196,6 +192,14 @@ void CodeGenerator::DoFinalCodeGen()
    }  else {
      Mips mips;
      mips.EmitPreamble();
+     mips.EmitPrintInt();
+     mips.EmitPrintBool();
+     mips.EmitPrintString();
+     mips.EmitAlloc();
+     mips.EmitStringEqual();
+     mips.EmitHalt();
+     mips.EmitReadInteger();
+     mips.EmitReadLine();
      for (int i = 0; i < code->NumElements(); i++)
 	 code->Nth(i)->Emit(&mips);
   }

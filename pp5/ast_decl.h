@@ -97,6 +97,7 @@ class FnDecl : public Decl
     Stmt *body;
     BeginFunc* beginFunc;
     int frameSize;
+    int paramOffset;
     
   public:
     FnDecl(Identifier *name, Type *returnType, List<VarDecl*> *formals);
