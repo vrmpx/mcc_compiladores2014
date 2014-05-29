@@ -4,9 +4,6 @@
  * statements in the parse tree.  For each statment in the
  * language (for, if, return, etc.) there is a corresponding
  * node class for that construct. 
- *
- * pp5: You will need to extend the Stmt classes to implement
- * code generation for statements.
  */
 
 
@@ -28,7 +25,6 @@ class Program : public Node
   public:
      Program(List<Decl*> *declList);
      void Check();
-     void Emit();
 };
 
 class Stmt : public Node
@@ -46,6 +42,7 @@ class StmtBlock : public Stmt
     
   public:
     StmtBlock(List<VarDecl*> *variableDeclarations, List<Stmt*> *statements);
+    void Check();
 };
 
   
@@ -57,6 +54,7 @@ class ConditionalStmt : public Stmt
   
   public:
     ConditionalStmt(Expr *testExpr, Stmt *body);
+    void Check();
 };
 
 class LoopStmt : public ConditionalStmt 
@@ -64,6 +62,7 @@ class LoopStmt : public ConditionalStmt
   public:
     LoopStmt(Expr *testExpr, Stmt *body)
             : ConditionalStmt(testExpr, body) {}
+    void Check();
 };
 
 class ForStmt : public LoopStmt 
@@ -88,12 +87,14 @@ class IfStmt : public ConditionalStmt
   
   public:
     IfStmt(Expr *test, Stmt *thenBody, Stmt *elseBody);
+    void Check();
 };
 
 class BreakStmt : public Stmt 
 {
   public:
     BreakStmt(yyltype loc) : Stmt(loc) {}
+    void Check();
 };
 
 class ReturnStmt : public Stmt  
@@ -103,6 +104,7 @@ class ReturnStmt : public Stmt
   
   public:
     ReturnStmt(yyltype loc, Expr *expr);
+    void Check();
 };
 
 class PrintStmt : public Stmt
@@ -112,6 +114,7 @@ class PrintStmt : public Stmt
     
   public:
     PrintStmt(List<Expr*> *arguments);
+    void Check();
 };
 
 

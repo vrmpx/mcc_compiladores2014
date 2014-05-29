@@ -1,9 +1,9 @@
-class Squash extends Vegetable {
-   void Grow(Seeds []seeds, int [][]water)
-   {
-      Print("But I don't like squash\n");
-      Print(10 * 5);
-   }
+void Grow(int a) {
+   Print("mmm... veggies!\n");
+}
+
+class Seeds {
+   int size;
 }
 
 class Vegetable {
@@ -28,15 +28,13 @@ class Vegetable {
    }
 }
 
-
-void Grow(int a) {
-   Print("mmm... veggies!\n");
+class Squash extends Vegetable {
+   void Grow(Seeds []seeds, int [][]water)
+   {
+      Print("But I don't like squash\n");
+      Print(10 * 5);
+   }
 }
-
-class Seeds {
-   int size;
-}
-
 
 void main()
 {

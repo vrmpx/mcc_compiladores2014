@@ -1,28 +1,23 @@
-bool Wild(string[] names, string answer)
-{
-   int i;
-   for (i = 0; i < names.length(); i = i + 1) {
-	if (names[i] == answer) 
-	   return true;
+class Cow {
+  int height;
+  int weight;
+
+  void Init(int w, int h)
+  {
+    weight = w;
+    height = h;
   }
-  return false;
+
+  void Moo() {
+    Print ( this.height, " ", this.weight, "\n" );
+  }
 }
+
 
 void main()
 {
-    string[] names;
-    names = NewArray(4, string);
-    names[0] = "Brian";
-    names[1] = "Cam";
-    names[2] = "Gavan";
-    names[3] = "Julie";
-
-    while (true) {
-      Print("\nWho is your favorite CS143 staff member? ");
-      if (Wild(names, ReadLine())) {
-	   Print("You just earned 1000 bonus points!\n");
-         break;
-      }
-      Print("That's not a good way to make points. Try again!\n");
-   }
+  Cow betsy;
+  betsy = New(Cow);
+  betsy.Init(100, 122);
+  betsy.Moo();
 }
