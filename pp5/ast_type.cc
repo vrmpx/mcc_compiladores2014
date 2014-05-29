@@ -6,7 +6,6 @@
 #include "ast_decl.h"
 #include <string.h>
 
-#include "errors.h"
  
 /* Class constants
  * ---------------
@@ -28,33 +27,19 @@ Type::Type(const char *n) {
     Assert(n);
     typeName = strdup(n);
 }
+
+
+
 	
 NamedType::NamedType(Identifier *i) : Type(*i->GetLocation()) {
     Assert(i != NULL);
     (id=i)->SetParent(this);
 } 
 
-bool NamedType::IsEquivalentTo(Type *other) {
-    NamedType *ot = dynamic_cast<NamedType*>(other);
-    return ot && strcmp(id->GetName(), ot->id->GetName()) == 0;
-}
 
 ArrayType::ArrayType(yyltype loc, Type *et) : Type(loc) {
     Assert(et != NULL);
     (elemType=et)->SetParent(this);
 }
 
-ArrayType::ArrayType(Type *et) : Type("") {
-    Assert(et != NULL);
-    (elemType=et)->SetParent(this);
-}
-
-void ArrayType::Check() {
-    elemType->Check();
-}
-
-bool ArrayType::IsEquivalentTo(Type *other) {
-    ArrayType *o = dynamic_cast<ArrayType*>(other);
-    return (o && elemType->IsEquivalentTo(o->elemType));
-}
 

@@ -4,6 +4,9 @@
  * statements in the parse tree.  For each statment in the
  * language (for, if, return, etc.) there is a corresponding
  * node class for that construct. 
+ *
+ * pp5: You will need to extend the Stmt classes to implement
+ * code generation for statements.
  */
 
 
@@ -12,22 +15,20 @@
 
 #include "list.h"
 #include "ast.h"
-#include "codegen.h"
 
 class Decl;
 class VarDecl;
 class Expr;
-
+  
 class Program : public Node
 {
   protected:
      List<Decl*> *decls;
      
   public:
-     static CodeGenerator *cg;
      Program(List<Decl*> *declList);
      void Check();
-     Location* Emit();
+     void Emit();
 };
 
 class Stmt : public Node
@@ -45,8 +46,6 @@ class StmtBlock : public Stmt
     
   public:
     StmtBlock(List<VarDecl*> *variableDeclarations, List<Stmt*> *statements);
-    void Check();
-    Location* Emit();
 };
 
   
@@ -58,8 +57,6 @@ class ConditionalStmt : public Stmt
   
   public:
     ConditionalStmt(Expr *testExpr, Stmt *body);
-    void Check();
-    Location* Emit();
 };
 
 class LoopStmt : public ConditionalStmt 
@@ -67,7 +64,6 @@ class LoopStmt : public ConditionalStmt
   public:
     LoopStmt(Expr *testExpr, Stmt *body)
             : ConditionalStmt(testExpr, body) {}
-    void Check();
 };
 
 class ForStmt : public LoopStmt 
@@ -77,7 +73,6 @@ class ForStmt : public LoopStmt
   
   public:
     ForStmt(Expr *init, Expr *test, Expr *step, Stmt *body);
-    Location* Emit();
 };
 
 class WhileStmt : public LoopStmt 
@@ -93,8 +88,6 @@ class IfStmt : public ConditionalStmt
   
   public:
     IfStmt(Expr *test, Stmt *thenBody, Stmt *elseBody);
-    void Check();
-    Location* Emit();
 };
 
 class BreakStmt : public Stmt 
@@ -119,8 +112,6 @@ class PrintStmt : public Stmt
     
   public:
     PrintStmt(List<Expr*> *arguments);
-    void Check();
-    Location* Emit();
 };
 
 

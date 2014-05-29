@@ -18,6 +18,11 @@
  * instead we wait until assigning the children into the parent node and then 
  * set up links in both directions. The parent link is typically not used 
  * during parsing, but is more important in later phases.
+ *
+ * Code generation: For pp5 you are adding "Emit" behavior to the ast
+ * node classes. Your code generator should do an postorder walk on the
+ * parse tree, and when visiting each node, emitting the necessary 
+ * instructions for that construct.
 
  */
 
@@ -26,20 +31,13 @@
 
 #include <stdlib.h>   // for NULL
 #include "location.h"
-#include "tac.h"
 #include <iostream>
-class Scope;
-class Decl;
-class Identifier;
-class Type;
-class FnDecl;
-class ClassDecl;
+
 class Node 
 {
   protected:
     yyltype *location;
     Node *parent;
-    Scope *nodeScope;
 
   public:
     Node(yyltype loc);
@@ -48,19 +46,6 @@ class Node
     yyltype *GetLocation()   { return location; }
     void SetParent(Node *p)  { parent = p; }
     Node *GetParent()        { return parent; }
-    virtual void Check() {} // not abstract, since some nodes have nothing to do
-    
-    typedef enum { kShallow, kDeep } lookup;
-    virtual Decl *FindDecl(Identifier *id, lookup l = kDeep);
-    virtual Scope *PrepareScope() { return NULL; }
-
-    Scope* GetScope() { return nodeScope; }
-    virtual Location* Emit() { return NULL; } //not abstract, since some nodes don't emit anything
-
-    // get enclosing function to backpatch the frame size
-    FnDecl *GetEnclosFunc(Node *node);
-    // for methods
-    ClassDecl *GetEnclosClass(Node *node);
 };
    
 
@@ -68,17 +53,10 @@ class Identifier : public Node
 {
   protected:
     char *name;
-    Decl *cached;
-    Location *memLoc;
     
   public:
     Identifier(yyltype loc, const char *name);
-    Identifier(const char *name);
     friend std::ostream& operator<<(std::ostream& out, Identifier *id) { return out << id->name; }
-    const char *GetName() { return name; }
-
-    Location *GetMemLoc() { return memLoc; }
-    void SetMemLoc(Location *loc) { memLoc = loc; }
 };
 
 
