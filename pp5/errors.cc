@@ -62,38 +62,38 @@ void ReportError::InvalidDirective(int linenum) {
 
 void ReportError::LongIdentifier(yyltype *loc, const char *ident) {
     stringstream s;
-    s << "Identifier too long: \"" << ident << "\"";
+    s << "Identifier too long: \"" << ident << "\"" << '\0';
     OutputError(loc, s.str());
 }
 
 void ReportError::UntermString(yyltype *loc, const char *str) {
     stringstream s;
-    s << "Unterminated string constant: " << str;
+    s << "Unterminated string constant: " << str << '\0';
     OutputError(loc, s.str());
 }
 
 void ReportError::UnrecogChar(yyltype *loc, char ch) {
     stringstream s;
-    s << "Unrecognized char: '" << ch << "'";
+    s << "Unrecognized char: '" << ch << "'" << '\0';
     OutputError(loc, s.str());
 }
 
 void ReportError::DeclConflict(Decl *decl, Decl *prevDecl) {
     stringstream s;
     s << "Declaration of '" << decl << "' here conflicts with declaration on line " 
-      << prevDecl->GetLocation()->first_line;
+      << prevDecl->GetLocation()->first_line << '\0';
     OutputError(decl->GetLocation(), s.str());
 }
   
 void ReportError::OverrideMismatch(Decl *fnDecl) {
     stringstream s;
-    s << "Method '" << fnDecl << "' must match inherited type signature";
+    s << "Method '" << fnDecl << "' must match inherited type signature" << '\0';
     OutputError(fnDecl->GetLocation(), s.str());
 }
 
 void ReportError::InterfaceNotImplemented(Decl *cd, Type *interfaceType) {
     stringstream s;
-    s << "Class '" << cd << "' does not implement entire interface '" << interfaceType << "'";
+    s << "Class '" << cd << "' does not implement entire interface '" << interfaceType << "'" << '\0';
     OutputError(interfaceType->GetLocation(), s.str());
 }
 
@@ -101,19 +101,19 @@ void ReportError::IdentifierNotDeclared(Identifier *ident, reasonT whyNeeded) {
     stringstream s;
     static const char *names[] =  {"type", "class", "interface", "variable", "function"};
     Assert(whyNeeded >= 0 && whyNeeded <= sizeof(names)/sizeof(names[0]));
-    s << "No declaration found for "<< names[whyNeeded] << " '" << ident << "'";
+    s << "No declaration found for "<< names[whyNeeded] << " '" << ident << "'" << '\0';
     OutputError(ident->GetLocation(), s.str());
 }
 
 void ReportError::IncompatibleOperands(Operator *op, Type *lhs, Type *rhs) {
     stringstream s;
-    s << "Incompatible operands: " << lhs << " " << op << " " << rhs;
+    s << "Incompatible operands: " << lhs << " " << op << " " << rhs << '\0';
     OutputError(op->GetLocation(), s.str());
 }
      
 void ReportError::IncompatibleOperand(Operator *op, Type *rhs) {
     stringstream s;
-    s << "Incompatible operand: " << op << " " << rhs;
+    s << "Incompatible operand: " << op << " " << rhs << '\0';
     OutputError(op->GetLocation(), s.str());
 }
 
@@ -136,38 +136,38 @@ void ReportError::NewArraySizeNotInteger(Expr *sizeExpr) {
 void ReportError::NumArgsMismatch(Identifier *fnIdent, int numExpected, int numGiven) {
     stringstream s;
     s << "Function '"<< fnIdent << "' expects " << numExpected << " argument" << (numExpected==1?"":"s") 
-      << " but " << numGiven << " given";
+      << " but " << numGiven << " given" << '\0';
     OutputError(fnIdent->GetLocation(), s.str());
 }
 
 void ReportError::ArgMismatch(Expr *arg, int argIndex, Type *given, Type *expected) {
   stringstream s;
-  s << "Incompatible argument " << argIndex << ": " << given << " given, " << expected << " expected";
+  s << "Incompatible argument " << argIndex << ": " << given << " given, " << expected << " expected" << '\0';
   OutputError(arg->GetLocation(), s.str());
 }
 
 void ReportError::ReturnMismatch(ReturnStmt *rStmt, Type *given, Type *expected) {
     stringstream s;
-    s << "Incompatible return: " << given << " given, " << expected << " expected";
+    s << "Incompatible return: " << given << " given, " << expected << " expected" << '\0';
     OutputError(rStmt->GetLocation(), s.str());
 }
 
 void ReportError::FieldNotFoundInBase(Identifier *field, Type *base) {
     stringstream s;
-    s << base << " has no such field '" << field <<"'" ;
+    s << base << " has no such field '" << field <<"'" <<'\0';
     OutputError(field->GetLocation(), s.str());
 }
      
 void ReportError::InaccessibleField(Identifier *field, Type *base) {
     stringstream s;
-    s  << base << " field '" << field << "' only accessible within class scope";
+    s  << base << " field '" << field << "' only accessible within class scope" << '\0';
     OutputError(field->GetLocation(), s.str());
 }
 
 void ReportError::PrintArgMismatch(Expr *arg, int argIndex, Type *given) {
     stringstream s;
     s << "Incompatible argument " << argIndex << ": " << given
-        << " given, int/bool/string expected";
+        << " given, int/bool/string expected" << '\0';
     OutputError(arg->GetLocation(), s.str());
 }
 
@@ -177,6 +177,10 @@ void ReportError::TestNotBoolean(Expr *expr) {
 
 void ReportError::BreakOutsideLoop(BreakStmt *bStmt) {
     OutputError(bStmt->GetLocation(), "break is only allowed inside a loop");
+}
+  
+void ReportError::NoMainFound() {
+    OutputError(NULL, "Linker: function 'main' not defined");
 }
   
 /* Function: yyerror()

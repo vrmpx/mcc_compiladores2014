@@ -46,6 +46,7 @@ class IntConstant : public Expr
   public:
     IntConstant(yyltype loc, int val);
     Type* GetType();
+    Location* Emit();
 };
 
 class DoubleConstant : public Expr 
@@ -66,6 +67,7 @@ class BoolConstant : public Expr
   public:
     BoolConstant(yyltype loc, bool val);
     Type* GetType();
+    Location* Emit();
 };
 
 class StringConstant : public Expr 
@@ -76,6 +78,7 @@ class StringConstant : public Expr
   public:
     StringConstant(yyltype loc, const char *val);
     Type* GetType();
+    Location* Emit();
 };
 
 class NullConstant: public Expr 
@@ -83,6 +86,7 @@ class NullConstant: public Expr
   public: 
     NullConstant(yyltype loc) : Expr(loc) {}
     Type* GetType();
+    Location* Emit();
 };
 
 class Operator : public Node 
@@ -115,6 +119,7 @@ class ArithmeticExpr : public CompoundExpr
     ArithmeticExpr(Operator *op, Expr *rhs) : CompoundExpr(op,rhs) {}
     void Check();
     Type* GetType();
+    Location* Emit();
 };
 
 class RelationalExpr : public CompoundExpr 
@@ -124,6 +129,7 @@ class RelationalExpr : public CompoundExpr
     bool IsBool() { return true; }
     Type* GetType();
     void Check();
+    Location* Emit();
 };
 
 class EqualityExpr : public CompoundExpr 
@@ -132,6 +138,7 @@ class EqualityExpr : public CompoundExpr
     EqualityExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     const char *GetPrintNameForNode() { return "EqualityExpr"; }
     Type* GetType();
+    Location* Emit();
 };
 
 class LogicalExpr : public CompoundExpr 
@@ -142,6 +149,7 @@ class LogicalExpr : public CompoundExpr
     const char *GetPrintNameForNode() { return "LogicalExpr"; }
     Type* GetType();
     void Check();
+    Location* Emit();
 };
 
 class AssignExpr : public CompoundExpr 
@@ -150,7 +158,7 @@ class AssignExpr : public CompoundExpr
     AssignExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     const char *GetPrintNameForNode() { return "AssignExpr"; }
     void Check();
-    void CheckExtends(Type *rtype, Type *ltype);
+    Location* Emit();
 };
 
 class LValue : public Expr 
@@ -165,6 +173,7 @@ class This : public Expr
     This(yyltype loc) : Expr(loc) {}
     Type* GetType();
     void Check();
+    Location* Emit();
 };
 
 class ArrayAccess : public LValue 
@@ -212,7 +221,6 @@ class Call : public Expr
     void Check();
 
   private:
-    void CheckFunction(Decl* d);
 };
 
 class NewExpr : public Expr

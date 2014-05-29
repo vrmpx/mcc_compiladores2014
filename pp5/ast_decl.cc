@@ -7,6 +7,7 @@
 #include "ast_stmt.h"
 #include "scope.h"
 #include "errors.h"
+#include "codegen.h"
 #include <stdio.h>
 using namespace std;
 
@@ -42,53 +43,8 @@ ClassDecl::ClassDecl(Identifier *n, NamedType *ex, List<NamedType*> *imp, List<D
 }
 
 void ClassDecl::Check() {
-    if (extends && !extends->IsClass()) {
-        ReportError::IdentifierNotDeclared(extends->GetId(), LookingForClass);
-        extends = NULL;
-    }
-    for (int i = 0; i < implements->NumElements(); i++) {
-        NamedType *in = implements->Nth(i);
-        if (!in->IsInterface()) {
-            ReportError::IdentifierNotDeclared(in->GetId(), LookingForInterface);
-            implements->RemoveAt(i--);
-        }else{
-            // cout << "CheckImplemented(" << in->GetId() << ")" << endl;
-            //Find decl in scope
-            InterfaceDecl *interfaceDecl = dynamic_cast<InterfaceDecl*>(this->FindDecl(in->GetId()));
-            if (in != NULL)
-                CheckImplemented(interfaceDecl, this, in);
-        }
-    }
     PrepareScope();
     members->CheckAll();
-}
-
-void ClassDecl::CheckImplemented(InterfaceDecl* in, ClassDecl* actual, NamedType *intype){
-    List<Decl*> *declsToImplement = in->GetMembers();
-    List<Decl*> *declsImplemented = actual->GetMembers();
-    bool found;
-    for(int i = 0; i < declsToImplement->NumElements(); i++){
-        found = false;
-
-        //Buscamos en el actual
-        for(int j = 0; j < declsImplemented->NumElements() && !found; j++){
-            if(strcmp(declsImplemented->Nth(j)->GetName(), declsToImplement->Nth(i)->GetName()) == 0)
-                found = true;
-        }
-
-        //Recorrimos todos los metodos de la clase y no encontramos el bueno
-        if(!found){
-            //Checamos el papa
-            if(actual->GetExtends() != NULL){
-                //Find decl in scope
-                ClassDecl *d = dynamic_cast<ClassDecl*>(this->FindDecl(actual->GetExtends()->GetId()));
-                CheckImplemented(in, d, intype);
-            }else{
-                //No encontramos nada...
-                ReportError::InterfaceNotImplemented(this, intype);
-            }
-        }
-    }
 }
 
 // This is not done very cleanly. I should sit down and sort this out. Right now
@@ -116,49 +72,6 @@ Scope *ClassDecl::PrepareScope()
     members->DeclareAll(nodeScope);
     return nodeScope;
 }
-
-bool ClassDecl::Extends(Type* other) {
-    if(!extends)
-        return false;
-
-    NamedType* nt = dynamic_cast<NamedType*>(other);
-    return (nt && nt->IsEquivalentTo(extends));
-}
-
-bool ClassDecl::Implements(Type *other) {
-    NamedType* nt = dynamic_cast<NamedType*>(other);
-    if (nt == NULL || !nt->IsInterface())
-        return false;
-
-    // cout << "nt is interface" << endl;
-
-    //find decl for type
-    InterfaceDecl* interf = dynamic_cast<InterfaceDecl*>(this->FindDecl(nt->GetId()));
-
-    // cout << interf << endl;
-
-    return Implements(interf, this);
-}
-
-bool ClassDecl::Implements(InterfaceDecl* interf, ClassDecl *actual) {
-    List<InterfaceDecl*> *imps = actual->GetImplements();
-    for (int i = 0; i < imps->NumElements(); i++){
-        // cout << "Checking: " << imps->Nth(i)->GetName() << endl;
-        if(strcmp(imps->Nth(i)->GetName(), interf->GetName()) == 0)
-            return true;
-    }
-    if(actual->GetExtends() != NULL){
-        //Checamos en el padre
-        ClassDecl *padre = dynamic_cast<ClassDecl*>(this->FindDecl(actual->GetExtends()->GetId()));
-        // cout << "Nuevo padre: " << padre << endl;
-        return Implements(interf, padre);
-    }else{
-        //No se encontro y regresamos false
-        // cout << "Returning false" << endl;
-        return false;
-    }
-}
-
 
 InterfaceDecl::InterfaceDecl(Identifier *n, List<Decl*> *m) : Decl(n) {
     Assert(n != NULL && m != NULL);
@@ -198,31 +111,24 @@ void FnDecl::Check() {
     }
 }
 
-bool FnDecl::ConflictsWithPrevious(Decl *prev) {
- // special case error for method override
-    if (IsMethodDecl() && prev->IsMethodDecl() && parent != prev->GetParent()) { 
-        if (!MatchesPrototype(dynamic_cast<FnDecl*>(prev))) {
-            ReportError::OverrideMismatch(this);
-            return true;
-        }
-        return false;
+Location* FnDecl::Emit() {
+    const char* name = id->GetName();
+
+    if(strcmp(name, "main") == 0)
+        Program::cg->GenLabel("main");
+    else 
+        Program::cg->GenLabel(name);
+
+    for (int i = 0; i < this->formals->NumElements(); i++) {
+        VarDecl *vardecl = this->formals->Nth(i);
+        vardecl->GetId()->SetMemLoc(Program::cg->GenTempVar());
     }
-    ReportError::DeclConflict(this, prev);
-    return true;
+
+    beginFunc = Program::cg->GenBeginFunc();
+    if(body)
+        body->Emit();
+
+    beginFunc->SetFrameSize(this->GetFrameSize());
+    Program::cg->GenEndFunc();
+    return NULL;
 }
-
-bool FnDecl::IsMethodDecl() 
-  { return dynamic_cast<ClassDecl*>(parent) != NULL || dynamic_cast<InterfaceDecl*>(parent) != NULL; }
-
-bool FnDecl::MatchesPrototype(FnDecl *other) {
-    if (!returnType->IsEquivalentTo(other->returnType)) return false;
-    if (formals->NumElements() != other->formals->NumElements())
-        return false;
-    for (int i = 0; i < formals->NumElements(); i++)
-        if (!formals->Nth(i)->GetDeclaredType()->IsEquivalentTo(other->formals->Nth(i)->GetDeclaredType()))
-            return false;
-    return true;
-}
-
-
-

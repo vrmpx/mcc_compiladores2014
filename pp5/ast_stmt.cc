@@ -8,7 +8,10 @@
 #include "ast_expr.h"
 #include "scope.h"
 #include "errors.h"
+#include "codegen.h"
 
+
+CodeGenerator* Program::cg = new CodeGenerator();
 
 Program::Program(List<Decl*> *d) {
     Assert(d != NULL);
@@ -19,6 +22,36 @@ void Program::Check() {
     nodeScope = new Scope();
     decls->DeclareAll(nodeScope);
     decls->CheckAll();
+
+    Emit();
+}
+
+Location* Program::Emit() {
+      /* pp5: here is where the code generation is kicked off.
+     *      The general idea is perform a tree traversal of the
+     *      entire program, generating instructions as you go.
+     *      Each node can have its own way of translating itself,
+     *      which makes for a great use of inheritance and
+     *      polymorphism in the node classes.
+     */
+     Decl* mainDecl = NULL;
+     for(int i = 0; i < decls->NumElements(); i++){
+        Decl* decl = decls->Nth(i);
+        if(strcmp(decl->GetName(), "main") == 0){
+            mainDecl = decl;
+        }else{
+            decl->Emit();
+        }
+     }
+
+     if(mainDecl)
+        mainDecl->Emit();
+    else
+        ReportError::NoMainFound();
+
+    Program::cg->DoFinalCodeGen();
+
+    return NULL;
 }
 
 StmtBlock::StmtBlock(List<VarDecl*> *d, List<Stmt*> *s) {
@@ -33,6 +66,16 @@ void StmtBlock::Check() {
     stmts->CheckAll();
 }
 
+Location* StmtBlock::Emit() {
+  for (int i = 0; i < decls->NumElements(); i++)
+    decls->Nth(i)->Emit();
+
+  for(int i = 0; i < stmts->NumElements(); i++)
+    stmts->Nth(i)->Emit();
+
+  return NULL;
+}
+
 ConditionalStmt::ConditionalStmt(Expr *t, Stmt *b) { 
     Assert(t != NULL && b != NULL);
     (test=t)->SetParent(this); 
@@ -41,16 +84,27 @@ ConditionalStmt::ConditionalStmt(Expr *t, Stmt *b) {
 
 void ConditionalStmt::Check() {
     body->Check();
-
-   if(!test->GetType()->IsEquivalentTo(Type::errorType) && !test->IsBool()){
-        ReportError::TestNotBoolean(test);
-    }
-
 }
 
 void LoopStmt::Check() {
     this->GetParent()->GetScope()->SetLoopStmt(this);
     ConditionalStmt::Check();
+}
+
+Location* LoopStmt::Emit(){
+  char *label_0 = Program::cg->NewLabel();
+  char *label_1 = Program::cg->NewLabel();
+
+  Program::cg->GenLabel(label_0);
+  Program::cg->GenIfZ(test->Emit(), label_1);
+
+  next = label_1;
+
+  body->Emit();
+  
+  Program::cg->GenGoto(label_0);
+  Program::cg->GenLabel(label_1);
+  return NULL;
 }
 
 ForStmt::ForStmt(Expr *i, Expr *t, Expr *s, Stmt *b): LoopStmt(t, b) { 
@@ -70,16 +124,30 @@ void IfStmt::Check() {
     if (elseBody) elseBody->Check();
 }
 
+Location* IfStmt::Emit() {
+  char *label_0 = Program::cg->NewLabel();
+  char *label_1 = Program::cg->NewLabel();
+
+  Program::cg->GenIfZ(test->Emit(), label_0);
+  body->Emit();
+
+  Program::cg->GenGoto(label_1);
+  Program::cg->GenLabel(label_0);
+
+  if(elseBody)
+    elseBody->Emit();
+
+  Program::cg->GenLabel(label_1);
+
+  return NULL;
+}
+
 void BreakStmt::Check() {
-    Node *parent = this->GetParent();
-    Scope *s;
-    while(parent != NULL){
-        s = parent->GetScope();
-        if(s && s->GetLoopStmt() != NULL)
-            return;
-        parent = parent->GetParent();
-    }
-    ReportError::BreakOutsideLoop(this);
+}
+
+Location* BreakStmt::Emit() {
+  Program::cg->GenGoto(dynamic_cast<LoopStmt*>(parent)->next);
+  return NULL;
 }
 
 ReturnStmt::ReturnStmt(yyltype loc, Expr *e) : Stmt(loc) { 
@@ -88,23 +156,15 @@ ReturnStmt::ReturnStmt(yyltype loc, Expr *e) : Stmt(loc) {
 }
 
 void ReturnStmt::Check() {
-    Node *parent = this->GetParent();
-    FnDecl *fn = NULL;
-    while (parent != NULL){
+}
 
-        if((fn = dynamic_cast<FnDecl*>(parent)) != NULL)
-            break;
+Location* ReturnStmt::Emit() {
+  if(expr)
+    Program::cg->GenReturn(expr->Emit());
+  else
+    Program::cg->GenReturn(NULL);
 
-        parent = parent->GetParent();
-    }
-
-    Type *expected = fn->GetType();
-    Type *actual = expr->GetType();
-
-    if (!expected->IsEquivalentTo(actual)){
-        ReportError::ReturnMismatch(this, actual, expected);
-        return;
-    }
+  return NULL;
 }
 
 PrintStmt::PrintStmt(List<Expr*> *a) {    
@@ -114,13 +174,19 @@ PrintStmt::PrintStmt(List<Expr*> *a) {
 
 void PrintStmt::Check() {
     args->CheckAll();
-
-    Type* t;
-    for(int i = 0; i < args->NumElements(); i++){
-        t = args->Nth(i)->GetType();
-        if (   !t->IsEquivalentTo(Type::errorType)  && !t->IsEquivalentTo(Type::intType) 
-            && !t->IsEquivalentTo(Type::stringType) && !t->IsEquivalentTo(Type::boolType))
-            ReportError::PrintArgMismatch(args->Nth(i), i + 1, t);
-    }
 }
 
+Location* PrintStmt::Emit() {
+  for(int i = 0; i < args->NumElements(); i++){
+    Expr *e = args->Nth(i);
+    Type *type = e->GetType();
+
+    if(type->IsEquivalentTo(Type::intType))
+      Program::cg->GenBuiltInCall(PrintInt, e->Emit());
+    else if(type->IsEquivalentTo(Type::stringType))
+      Program::cg->GenBuiltInCall(PrintString, e->Emit());
+    else if(type->IsEquivalentTo(Type::boolType))
+      Program::cg->GenBuiltInCall(PrintBool, e->Emit());
+  }
+  return NULL;
+}

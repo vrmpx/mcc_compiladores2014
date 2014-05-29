@@ -16,6 +16,7 @@
 class Decl;
 class VarDecl;
 class Expr;
+class CodeGenerator;
   
 class Program : public Node
 {
@@ -23,8 +24,10 @@ class Program : public Node
      List<Decl*> *decls;
      
   public:
+     static CodeGenerator *cg;
      Program(List<Decl*> *declList);
      void Check();
+     Location* Emit();
 };
 
 class Stmt : public Node
@@ -43,6 +46,7 @@ class StmtBlock : public Stmt
   public:
     StmtBlock(List<VarDecl*> *variableDeclarations, List<Stmt*> *statements);
     void Check();
+    Location* Emit();
 };
 
   
@@ -60,9 +64,11 @@ class ConditionalStmt : public Stmt
 class LoopStmt : public ConditionalStmt 
 {
   public:
+    char* next;
     LoopStmt(Expr *testExpr, Stmt *body)
             : ConditionalStmt(testExpr, body) {}
     void Check();
+    Location* Emit();
 };
 
 class ForStmt : public LoopStmt 
@@ -88,6 +94,7 @@ class IfStmt : public ConditionalStmt
   public:
     IfStmt(Expr *test, Stmt *thenBody, Stmt *elseBody);
     void Check();
+    Location* Emit();
 };
 
 class BreakStmt : public Stmt 
@@ -95,6 +102,7 @@ class BreakStmt : public Stmt
   public:
     BreakStmt(yyltype loc) : Stmt(loc) {}
     void Check();
+    Location* Emit();
 };
 
 class ReturnStmt : public Stmt  
@@ -105,6 +113,7 @@ class ReturnStmt : public Stmt
   public:
     ReturnStmt(yyltype loc, Expr *expr);
     void Check();
+    Location* Emit();
 };
 
 class PrintStmt : public Stmt
@@ -115,6 +124,7 @@ class PrintStmt : public Stmt
   public:
     PrintStmt(List<Expr*> *arguments);
     void Check();
+    Location* Emit();
 };
 
 

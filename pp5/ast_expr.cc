@@ -6,7 +6,7 @@
 #include "ast_type.h"
 #include "ast_decl.h"
 #include <string.h>
-
+#include "codegen.h"
 #include "errors.h"
 
 #include <stdio.h>
@@ -54,6 +54,10 @@ Type* IntConstant::GetType() {
     return Type::intType;
 }
 
+Location* IntConstant::Emit() {
+    return Program::cg->GenLoadConstant(this->value);
+}
+
 DoubleConstant::DoubleConstant(yyltype loc, double val) : Expr(loc) {
     value = val;
 }
@@ -70,6 +74,10 @@ Type* BoolConstant::GetType() {
     return Type::boolType;
 }
 
+Location* BoolConstant::Emit() {
+    return Program::cg->GenLoadConstant(static_cast<int>(this->value));
+}
+
 StringConstant::StringConstant(yyltype loc, const char *val) : Expr(loc) {
     Assert(val != NULL);
     value = strdup(val);
@@ -79,8 +87,16 @@ Type* StringConstant::GetType() {
     return Type::stringType;
 }
 
+Location* StringConstant::Emit() {
+    return Program::cg->GenLoadConstant(this->value);
+}
+
 Type* NullConstant::GetType() {
     return Type::nullType;
+}
+
+Location* NullConstant::Emit() {
+    return Program::cg->GenLoadConstant(0);
 }
 
 Operator::Operator(yyltype loc, const char *tok) : Node(loc) {
@@ -111,30 +127,6 @@ void CompoundExpr::Check() {
 
 void ArithmeticExpr::Check() {
     CompoundExpr::Check();
-
-    Type* rtype = right->GetType();
-
-    if(rtype->IsEquivalentTo(Type::errorType))
-        return;
-
-    if(left == NULL){
-        if(!rtype->IsEquivalentTo(Type::intType) && !rtype->IsEquivalentTo(Type::doubleType))
-            ReportError::IncompatibleOperand(op, rtype);
-    }else{
-        Type* ltype = left->GetType();
-
-        if(ltype->IsEquivalentTo(Type::errorType))
-            return;
-
-        if(rtype->IsEquivalentTo(Type::intType) && !ltype->IsEquivalentTo(Type::intType))
-            ReportError::IncompatibleOperands(op, ltype, rtype);
-        else if (rtype->IsEquivalentTo(Type::doubleType) && !ltype->IsEquivalentTo(Type::doubleType))
-            ReportError::IncompatibleOperands(op, ltype, rtype);
-        else if(!rtype->IsEquivalentTo(Type::intType) && ltype->IsEquivalentTo(Type::intType))
-            ReportError::IncompatibleOperands(op, ltype, rtype);
-        else if(!rtype->IsEquivalentTo(Type::doubleType) && ltype->IsEquivalentTo(Type::doubleType))
-            ReportError::IncompatibleOperands(op, ltype, rtype);
-    }
 }
 
 Type* ArithmeticExpr::GetType() {
@@ -150,19 +142,22 @@ Type* ArithmeticExpr::GetType() {
     }
 }
 
+Location* ArithmeticExpr::Emit() {
+    if(right){
+        const char* token = op->str();
+        if(left){
+            return Program::cg->GenBinaryOp(token, left->Emit(), right->Emit());
+        }else{
+            Location* zero = Program::cg->GenLoadConstant(0);
+            return Program::cg->GenBinaryOp(token, zero, right->Emit());
+        }
+    }
+    return NULL;
+}
+
 void RelationalExpr::Check() {
     left->Check();
     right->Check();
-
-    Type* rtype = right->GetType();
-    Type* ltype = left->GetType();
-
-    if(ltype->IsEquivalentTo(Type::errorType) || rtype->IsEquivalentTo(Type::errorType))
-            return;
-
-    if(!rtype->IsEquivalentTo(ltype))
-        ReportError::IncompatibleOperands(op, ltype, rtype);
-
 }
 
 Type* RelationalExpr::GetType() {
@@ -182,25 +177,30 @@ Type* RelationalExpr::GetType() {
     return Type::boolType;
 }
 
+Location* RelationalExpr::Emit() {
+    const char* token = op->str();
+    Location* leftloc = left->Emit();
+    Location* rightloc = right->Emit();
+    return Program::cg->GenBinaryOp(token, leftloc, rightloc);
+}
+
 Type* EqualityExpr::GetType() {
     return Type::boolType;
 }
 
+Location* EqualityExpr::Emit() {
+    if(left->GetType()->IsEquivalentTo(Type::stringType) && right->GetType()->IsEquivalentTo(Type::stringType)){
+        return Program::cg->GenBuiltInCall(StringEqual, left->Emit(), right->Emit());
+    }else{
+        const char* token = op->str();
+        Location* leftloc = left->Emit();
+        Location* rightloc = right->Emit();
+        return Program::cg->GenBinaryOp(token, leftloc, rightloc);       
+    }
+}
+
 void LogicalExpr::Check() {
     CompoundExpr::Check();
-
-    // cout << "LogicalExpr::Check" << endl;
-
-    // cout << right << endl;
-
-    if(!right->GetType()->IsEquivalentTo(Type::boolType)){
-        ReportError::IncompatibleOperand(op, right->GetType());
-        return;
-    }
-    if(left && !left->GetType()->IsEquivalentTo(Type::boolType)){
-        ReportError::IncompatibleOperands(op, right->GetType(), left->GetType());
-        return;
-    }
 }
 
 Type* LogicalExpr::GetType() {
@@ -220,38 +220,29 @@ Type* LogicalExpr::GetType() {
     }
 }
 
+Location* LogicalExpr::Emit() {
+    if(left){
+        return Program::cg->GenBinaryOp(op->str(), left->Emit(), right->Emit());
+    }else{
+        Location* one = Program::cg->GenLoadConstant(1);
+        return Program::cg->GenBinaryOp("-", one, right->Emit());
+    }
+}
+
 void AssignExpr::Check() {
     left->Check();
     right->Check();
-
-    Type *rtype = right->GetType();
-    Type *ltype = left->GetType();
-
-    if(ltype->IsEquivalentTo(Type::errorType) || rtype->IsEquivalentTo(Type::errorType))
-        return;
-
-    if(rtype->IsEquivalentTo(ltype))
-        return;
-
-    CheckExtends(rtype, ltype);
 }
 
-void AssignExpr::CheckExtends(Type* rtype, Type* ltype) {
-    NamedType *ntright = dynamic_cast<NamedType*>(rtype);
-    if(ntright != NULL){
-        ClassDecl* rightDecl = dynamic_cast<ClassDecl*>(this->FindDecl(ntright->GetId()));
-
-        // cout << "CheckExtends: " << rightDecl << " vs. " << ltype << endl;
-
-        if(rightDecl != NULL && (rightDecl->Extends(ltype) || rightDecl->Implements(ltype)))
-            return;
-    }
-    ReportError::IncompatibleOperands(op, ltype, rtype);
+Location* AssignExpr::Emit() {
+    Location* rightloc = right->Emit();
+    Location* leftloc = left->Emit();
+    
+    Program::cg->GenAssign(leftloc, rightloc);
+    return leftloc;
 }
 
 void This::Check() {
-    if(GetClassFromScope(this) == NULL)
-        ReportError::ThisOutsideClassScope(this);
 }
 
 Type* This::GetType() {
@@ -259,6 +250,10 @@ Type* This::GetType() {
     if(c != NULL)
         return c->GetType();
     return Type::errorType;
+}
+
+Location* This::Emit() {
+    return NULL;    
 }
 
 ArrayAccess::ArrayAccess(yyltype loc, Expr *b, Expr *s) : LValue(loc) {
@@ -296,43 +291,7 @@ FieldAccess::FieldAccess(Expr *b, Identifier *f)
 void FieldAccess::Check() {
     if(base!=NULL)
         base->Check();
-    field->Check();
-
-    if(base != NULL){
-
-        Type* btype = base->GetType();
-        NamedType* ntype = dynamic_cast<NamedType*>(btype);
-        if(ntype != NULL){
-            //Class.field
-
-            //Vertificamos que existe el campo
-            ClassDecl* d = dynamic_cast<ClassDecl*>(this->FindDecl(ntype->GetId()));
-            if( d != NULL ){
-                Decl* lookup = FindDeclInClass(d, field);
-                if ( lookup == NULL ){
-                    ReportError::FieldNotFoundInBase(field, ntype);
-                    return;
-                }
-            }
-
-            //Revisamos que nos encontramos en class scope
-            ClassDecl* c = GetClassFromScope(this);
-            if(c == NULL)
-                ReportError::InaccessibleField(field, base->GetType());
-
-        }else{
-            //type.field
-            ReportError::FieldNotFoundInBase(field, btype);
-            return;
-        }
-       
-    } else {
-
-        Decl* d = this->FindDecl(field);
-        if(d == NULL || dynamic_cast<VarDecl*>(d) == NULL)
-            ReportError::IdentifierNotDeclared(field, LookingForVariable);
-
-    }
+    field->Check();   
 }
 
 Type* FieldAccess::GetType() {
@@ -376,78 +335,6 @@ void Call::Check() {
 
     field->Check();
     actuals->CheckAll();
-
-    if(base != NULL) {
-        NamedType *nt = dynamic_cast<NamedType*>(base->GetType()); // Recuperamos la clase de base
-        if(nt != NULL){
-            ClassDecl* d = dynamic_cast<ClassDecl*>(this->FindDecl(nt->GetId()));
-
-            if(d != NULL){
-                Decl* lookup = FindDeclInClass(d, field);
-                if(lookup == NULL){
-                    ReportError::FieldNotFoundInBase(field, nt);
-                }else{
-                    CheckFunction(lookup);    
-                }
-            }
-            //d == null ???
-        }else{
-
-            ArrayType* at = dynamic_cast<ArrayType*>(base->GetType());
-            if(at != NULL){
-                return;
-            }
-
-            ReportError::FieldNotFoundInBase(field, base->GetType()); 
-        }
-
-    } else {
-        //Base is null 
-        Decl* d = this->FindDecl(field);
-        if ( d == NULL ){
-            ReportError::IdentifierNotDeclared(field, LookingForFunction);
-            return;
-        }
-
-        CheckFunction(d);
-    }
-}
-
-void Call::CheckFunction(Decl* d){
-    //Contamos los parametros enviados y solicitados
-    FnDecl* f = dynamic_cast<FnDecl*>(d);
-    if(f != NULL){
-
-        int numGiven = actuals->NumElements();
-        int numExpected = f->GetActualsLength();
-
-        if (numGiven != numExpected){
-            ReportError::NumArgsMismatch(field, numExpected, numGiven);
-            return;
-        }
-
-        //Verificamos el tipo de cada param
-        List<VarDecl*> *formals = f->GetFormals();
-        Type *given, *expected;
-        for(int i = 0; i < numGiven; i++){
-            given = actuals->Nth(i)->GetType();
-            expected = formals->Nth(i)->GetType();
-
-            if(!given->IsEquivalentTo(expected)){
-                //Is expected NamedType?
-                if(dynamic_cast<NamedType*>(expected) != NULL){
-                    //Check against null
-                    if(!given->IsEquivalentTo(Type::nullType))
-                        ReportError::ArgMismatch(actuals->Nth(i), i + 1, given, expected);
-                } else {
-                    ReportError::ArgMismatch(actuals->Nth(i), i + 1, given, expected);
-                }
-            }
-        }
-    } else { 
-        // d no es una funcion ??
-        ReportError::IdentifierNotDeclared(field, LookingForFunction);
-    }
 }
 
 Type* Call::GetType() {
@@ -487,10 +374,6 @@ NewExpr::NewExpr(yyltype loc, NamedType *c) : Expr(loc) {
 }
 
 void NewExpr::Check() {
-    Decl* d = cType->GetDeclForType();
-    if( d == NULL || dynamic_cast<ClassDecl*>(d) == NULL) {
-        ReportError::IdentifierNotDeclared(cType->GetId(), LookingForClass);
-    }
 }
 
 
@@ -503,9 +386,6 @@ NewArrayExpr::NewArrayExpr(yyltype loc, Expr *sz, Type *et) : Expr(loc) {
 void NewArrayExpr::Check() {
     size->Check();
     elemType->Check();
-
-    if(!size->GetType()->IsEquivalentTo(Type::intType))
-        ReportError::NewArraySizeNotInteger(size);
 }
 
 Type* NewArrayExpr::GetType() {

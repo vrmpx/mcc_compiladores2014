@@ -35,10 +35,6 @@ NamedType::NamedType(Identifier *i) : Type(*i->GetLocation()) {
 } 
 
 void NamedType::Check() {
-    if (!GetDeclForType()) {
-        isError = true;
-        ReportError::IdentifierNotDeclared(id, LookingForType);
-    }
 }
 Decl *NamedType::GetDeclForType() {
     if (!cachedDecl && !isError) {

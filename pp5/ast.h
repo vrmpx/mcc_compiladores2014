@@ -26,6 +26,7 @@
 
 #include <stdlib.h>   // for NULL
 #include "location.h"
+#include "tac.h"
 #include <iostream>
 class Scope;
 class Decl;
@@ -53,6 +54,7 @@ class Node
     virtual Scope *PrepareScope() { return NULL; }
 
     Scope* GetScope() { return nodeScope; }
+    virtual Location* Emit() { return NULL; }
 };
    
 
@@ -61,12 +63,16 @@ class Identifier : public Node
   protected:
     char *name;
     Decl *cached;
+    Location* memLoc;
     
   public:
     Identifier(yyltype loc, const char *name);
     Identifier(const char *name);
     friend std::ostream& operator<<(std::ostream& out, Identifier *id) { return out << id->name; }
     const char *GetName() { return name; }
+
+    Location* GetMemLoc() { return memLoc; }
+    void SetMemLoc(Location *loc) { memLoc = loc; } 
 };
 
 

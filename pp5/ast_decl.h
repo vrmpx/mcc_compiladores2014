@@ -18,7 +18,7 @@ class Identifier;
 class Stmt;
 class FnDecl;
 class InterfaceDecl;
-
+class BeginFunc;
 
 class Decl : public Node 
 {
@@ -50,7 +50,7 @@ class VarDecl : public Decl
     VarDecl(Identifier *name, Type *type);
     void Check();
     Type *GetDeclaredType() { return type; }
-    Type* GetType() { return type; }
+    Type* GetType() { return type; }  
 };
 
 class ClassDecl : public Decl 
@@ -66,14 +66,10 @@ class ClassDecl : public Decl
     ClassDecl(Identifier *name, NamedType *extends, 
               List<NamedType*> *implements, List<Decl*> *members);
     void Check();
-    void CheckImplemented(InterfaceDecl *in, ClassDecl *actual, NamedType *intype);
     bool IsClassDecl() { return true; }
     Scope *PrepareScope();
     Type* GetType() { return cType; }
     Scope* GetScope() { return nodeScope; }
-    bool Extends(Type* other);
-    bool Implements(Type* other);
-    bool Implements(InterfaceDecl *interf, ClassDecl *actual);
     List<Decl*> *GetMembers() { return members; }
     NamedType* GetExtends() { return extends; }
     List<InterfaceDecl*> *GetImplements() { return convImp; }
@@ -99,18 +95,19 @@ class FnDecl : public Decl
     List<VarDecl*> *formals;
     Type *returnType;
     Stmt *body;
+    BeginFunc* beginFunc;
+    int frameSize;
     
   public:
     FnDecl(Identifier *name, Type *returnType, List<VarDecl*> *formals);
     void SetFunctionBody(Stmt *b);
     void Check();
     bool IsFnDecl() { return true; }
-    bool IsMethodDecl();
-    bool ConflictsWithPrevious(Decl *prev);
-    bool MatchesPrototype(FnDecl *other);
     Type* GetType() { return returnType; }
     int GetActualsLength() { return formals->NumElements(); }
     List<VarDecl*>* GetFormals() { return formals; }
+    Location* Emit();
+    int GetFrameSize() { return frameSize; }
 };
 
 #endif
